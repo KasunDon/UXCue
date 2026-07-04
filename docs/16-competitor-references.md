@@ -2,7 +2,7 @@
 
 Research date: 2026-07-04
 
-This file is a refinement aid. It lists direct, near, and adjacent competitors with links, product notes, overlap with UXLens, gaps, and lessons to borrow or avoid.
+This file is a refinement aid. It lists direct, near, and adjacent competitors with links, product notes, overlap with UXCue, gaps, and lessons to borrow or avoid.
 
 ## How To Use This Doc
 
@@ -17,7 +17,7 @@ Use this when refining:
 - GitHub/MCP integration.
 - Web Store copy.
 
-The goal is not to clone competitors. The goal is to identify where the category already has mature expectations and where UXLens can be meaningfully different.
+The goal is not to clone competitors. The goal is to identify where the category already has mature expectations and where UXCue can be meaningfully different.
 
 ## Category Map
 
@@ -51,7 +51,7 @@ Notable claims/features from public pages:
 - AI task context includes comment, screenshot/recording, URL, CSS selector, browser/OS, severity, assignees, due date, tags, visibility, and comment history.
 - BugHerd claims 10,000+ companies and 350,000+ users.
 
-Overlap with UXLens:
+Overlap with UXCue:
 
 - Visual website feedback.
 - Screenshots.
@@ -60,7 +60,7 @@ Overlap with UXLens:
 - AI-agent handoff.
 - MCP.
 
-Gaps UXLens can target:
+Gaps UXCue can target:
 
 - Local-first capture with no SaaS account.
 - Markdown/JSON portability as a first-class artifact.
@@ -84,7 +84,7 @@ Avoid:
 
 Refinement prompt:
 
-> Why would someone choose UXLens instead of BugHerd MCP for a localhost/staging design QA pass?
+> Why would someone choose UXCue instead of BugHerd MCP for a localhost/staging design QA pass?
 
 ### Marker.io
 
@@ -102,20 +102,20 @@ Notable public-page signals:
 - Integrates with issue trackers including Jira, GitHub, GitLab, Azure DevOps, Linear, and Bitbucket.
 - Also lists integrations like LogRocket, FullStory, BrowserStack, Slack, Trello, Asana, ClickUp, and others.
 
-Overlap with UXLens:
+Overlap with UXCue:
 
 - Browser-based visual feedback.
 - Bug report generation.
 - Issue tracker integration.
 - UAT/design review workflows.
 
-Gaps UXLens can target:
+Gaps UXCue can target:
 
 - AI-agent-ready markdown and JSON.
 - Local-first workflow.
 - DOM/style/component capture for code agents.
 - Direct design QA taxonomy.
-- UXLens issue tracking before external issue creation.
+- UXCue issue tracking before external issue creation.
 
 Borrow:
 
@@ -152,14 +152,14 @@ Notable public-page signals:
 - Integrations listed include GitHub, GitLab, Jira, Linear, Slack, Sentry, Figma, FullStory, Datadog, and others.
 - Public page references Jam MCP.
 
-Overlap with UXLens:
+Overlap with UXCue:
 
 - Browser extension.
 - Screenshot/recording/technical context.
 - Bug reports developers can act on.
 - AI/MCP direction.
 
-Gaps UXLens can target:
+Gaps UXCue can target:
 
 - Design QA issue tracking rather than general bug reproduction.
 - Element selector, DOM path, computed styles, parent layout, and design context.
@@ -180,7 +180,7 @@ Avoid:
 
 Refinement prompt:
 
-> Should UXLens say "Never explain another UI defect" and focus the promise around visual/design bugs rather than all bugs?
+> Should UXCue say "Never explain another UI defect" and focus the promise around visual/design bugs rather than all bugs?
 
 ### Userback
 
@@ -199,7 +199,7 @@ Notable public-page signals:
 - It positions itself as a broader full feedback loop with feature portal, surveys, session replays, and automation.
 - Public page says modern customer feedback platforms attach screenshots, session replay, and customer attributes.
 
-Overlap with UXLens:
+Overlap with UXCue:
 
 - Visual feedback.
 - Bug reporting.
@@ -207,7 +207,7 @@ Overlap with UXLens:
 - AI/MCP direction.
 - Feedback workflow tracking.
 
-Gaps UXLens can target:
+Gaps UXCue can target:
 
 - Narrow design QA for AI code fixing.
 - Local-first and export-first.
@@ -227,7 +227,7 @@ Avoid:
 
 Refinement prompt:
 
-> Is UXLens a customer feedback platform? No. Keep it as design QA to agent work order.
+> Is UXCue a customer feedback platform? No. Keep it as design QA to agent work order.
 
 ### Usersnap
 
@@ -246,14 +246,14 @@ Notable public-page signals:
 - Lists labeling/tagging, centralized dashboards, and integrations like Jira, Azure DevOps, Trello, Slack, GitHub, and many more.
 - AI sidekick "Airis" is positioned for categorizing feedback and surfacing trends.
 
-Overlap with UXLens:
+Overlap with UXCue:
 
 - Visual feedback capture.
 - Screenshots and metadata.
 - Feedback analysis and categorization.
 - Dashboards and integrations.
 
-Gaps UXLens can target:
+Gaps UXCue can target:
 
 - Agent-ready issue bodies.
 - Local-first/private workflow.
@@ -272,7 +272,7 @@ Avoid:
 
 Refinement prompt:
 
-> What if UXLens becomes "evidence for agents" rather than "evidence for product decisions"?
+> What if UXCue becomes "evidence for agents" rather than "evidence for product decisions"?
 
 ### Ruttl
 
@@ -292,7 +292,7 @@ Notable public-page signals:
 - Mentions pixel-level feedback, comments, task assignment, priorities, deadlines, and integrations such as Trello, Slack, Asana, Jira, Zapier, ClickUp.
 - Ruttl AI claims analysis/suggestions/optimization, sentiment analysis, performance recommendations, and coming accessibility/SEO checks.
 
-Overlap with UXLens:
+Overlap with UXCue:
 
 - Design feedback.
 - Pixel-level comments.
@@ -300,7 +300,7 @@ Overlap with UXLens:
 - AI suggestions.
 - Accessibility/performance hints.
 
-Gaps UXLens can target:
+Gaps UXCue can target:
 
 - AI coding agent work orders.
 - Local-first extension.
@@ -319,7 +319,7 @@ Avoid:
 
 Refinement prompt:
 
-> Should UXLens call itself "design QA for web apps" instead of generic "website feedback"?
+> Should UXCue call itself "design QA for web apps" instead of generic "website feedback"?
 
 ### VS Code Integrated Browser / Copilot Chat Context
 
@@ -378,13 +378,13 @@ Positioning:
 - Open-source agentic IDE.
 - Coding agent orchestration, app previews, git workflows, model/provider flexibility.
 
-Overlap with UXLens:
+Overlap with UXCue:
 
 - AI coding workflow.
 - Browser/app inspection adjacency.
 - Developer productivity.
 
-Gaps UXLens can target:
+Gaps UXCue can target:
 
 - Reviewer-owned issue capture.
 - Multi-issue design QA sessions.
@@ -396,7 +396,7 @@ Relationship:
 
 Refinement prompt:
 
-> Could UXLens export a session that stagewise or another agentic IDE can consume?
+> Could UXCue export a session that stagewise or another agentic IDE can consume?
 
 ### GitHub Issues / GitHub MCP
 
@@ -410,17 +410,17 @@ Positioning:
 - GitHub Issues is the engineering work tracker for many projects.
 - GitHub MCP already exposes GitHub operations to agents.
 
-Overlap with UXLens:
+Overlap with UXCue:
 
 - Issue creation.
 - Agent work assignment.
 - Status and PR linkage.
 
-Gaps UXLens can target:
+Gaps UXCue can target:
 
 - Better source issue context before GitHub issue creation.
 - Screenshots, selector, computed style, DOM, viewport, design brief.
-- Local/cloud UXLens issue state before external sync.
+- Local/cloud UXCue issue state before external sync.
 
 Relationship:
 
@@ -441,11 +441,11 @@ Positioning:
 
 - Agents execute code changes.
 
-Overlap with UXLens:
+Overlap with UXCue:
 
 - They may inspect browser/app context directly in some workflows.
 
-Gaps UXLens can target:
+Gaps UXCue can target:
 
 - Reviewer-driven capture.
 - Accumulated review session.
@@ -454,7 +454,7 @@ Gaps UXLens can target:
 
 Relationship:
 
-- UXLens should feed these agents, not compete with them.
+- UXCue should feed these agents, not compete with them.
 
 Refinement prompt:
 
@@ -462,7 +462,7 @@ Refinement prompt:
 
 ## Feature Comparison Matrix
 
-| Capability | BugHerd | Marker.io | Jam | Userback | Usersnap | Ruttl | UXLens Target |
+| Capability | BugHerd | Marker.io | Jam | Userback | Usersnap | Ruttl | UXCue Target |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Browser/website visual feedback | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
 | Screenshot capture | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
@@ -471,7 +471,7 @@ Refinement prompt:
 | GitHub integration | Yes | Yes | Yes | Likely integrations | Yes | Via integrations | Optional |
 | Local-only mode | No/limited | No/limited | No/limited | No/limited | No/limited | No/limited | Yes |
 | Markdown/JSON as first-class export | Unclear | Unclear | Link/report oriented | Unclear | Unclear | Unclear | Yes |
-| AI/MCP | Yes | Not primary from checked page | Yes/MCP referenced | MCP content referenced | AI analysis | AI suggestions | Later, UXLens-native |
+| AI/MCP | Yes | Not primary from checked page | Yes/MCP referenced | MCP content referenced | AI analysis | AI suggestions | Later, UXCue-native |
 | DOM selector | Yes in BugHerd MCP context | Unknown from homepage | Debug context, not primary design selector | Unknown | Metadata | Unknown | Yes |
 | Computed style/design context | Unknown | Unknown | Not primary | Unknown | Unknown | Unknown | Yes |
 | Component hints | Unknown | Unknown | Unknown | Unknown | Unknown | Unknown | Best effort |
@@ -481,7 +481,7 @@ Refinement prompt:
 
 ## Differentiation Tests
 
-UXLens should be able to answer these better than competitors:
+UXCue should be able to answer these better than competitors:
 
 1. Can I review a localhost app without setting up a SaaS project first?
 2. Can I export the entire review as markdown and JSON for an AI coding agent?
@@ -531,7 +531,7 @@ Cons:
 
 Recommended:
 
-> UXLens turns visual QA into agent-ready issues. Capture UI defects locally, sync when needed, and export to markdown, JSON, GitHub, or MCP.
+> UXCue turns visual QA into agent-ready issues. Capture UI defects locally, sync when needed, and export to markdown, JSON, GitHub, or MCP.
 
 ## Competitor-Driven Backlog Refinements
 

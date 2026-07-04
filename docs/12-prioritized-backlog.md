@@ -75,7 +75,7 @@ Goal: GitHub is an optional output/sync target.
 | G3-001 | P0 | GitHub auth decision | R0-010 | PAT/OAuth/App path chosen for alpha |
 | G3-002 | P0 | Repo settings | G3-001 | User chooses default owner/repo per project |
 | G3-003 | P0 | Issue body template | L1-008 | GitHub markdown preview generated |
-| G3-004 | P0 | Create GitHub issue | G3-001/G3-003 | Issue URL stored on UXLens issue |
+| G3-004 | P0 | Create GitHub issue | G3-001/G3-003 | Issue URL stored on UXCue issue |
 | G3-005 | P0 | Error handling | G3-004 | Auth/permission/rate/repo errors shown |
 | G3-006 | P1 | Link existing issue | G3-002 | User links GitHub URL manually |
 | G3-007 | P1 | Status refresh | G3-006 | Closed/open state read from GitHub |
@@ -101,7 +101,7 @@ Goal: publishable beta with clear privacy/account story.
 
 ## Release 5: Agent/MCP Beta
 
-Goal: agents can read and update UXLens issues directly.
+Goal: agents can read and update UXCue issues directly.
 
 | ID | Priority | Item | Dependencies | Acceptance |
 | --- | --- | --- | --- | --- |

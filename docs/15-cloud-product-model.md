@@ -4,7 +4,7 @@
 
 Cloud is a convenience layer, not a requirement.
 
-UXLens should feel safe for localhost, staging, authenticated apps, and private projects. Local-only mode should be useful forever. Cloud should add sync, sharing, history, and integrations.
+UXCue should feel safe for localhost, staging, authenticated apps, and private projects. Local-only mode should be useful forever. Cloud should add sync, sharing, history, and integrations.
 
 ## Account Modes
 
@@ -25,7 +25,7 @@ Limitations:
 - No share links.
 - No cloud-hosted screenshot links.
 
-### UXLens Cloud Account
+### UXCue Cloud Account
 
 Login:
 
@@ -48,14 +48,14 @@ Login:
 
 Capabilities:
 
-- Create GitHub issue from UXLens issue.
+- Create GitHub issue from UXCue issue.
 - Link GitHub issue.
 - Refresh GitHub state.
 
 Important:
 
-- GitHub connection is not the UXLens identity.
-- Disconnecting GitHub does not delete UXLens data.
+- GitHub connection is not the UXCue identity.
+- Disconnecting GitHub does not delete UXCue data.
 
 ## Suggested Plan Tiers
 
@@ -242,15 +242,15 @@ Post-MVP:
 
 Short version:
 
-> UXLens stores review data locally by default. If you sign in and enable cloud sync, UXLens uploads issue text, page metadata, selected element metadata, and screenshots for the projects you choose. GitHub is a separate optional integration.
+> UXCue stores review data locally by default. If you sign in and enable cloud sync, UXCue uploads issue text, page metadata, selected element metadata, and screenshots for the projects you choose. GitHub is a separate optional integration.
 
 Permission copy:
 
-> UXLens needs access to the active page only when you capture feedback, so it can identify the selected element and take a screenshot for your review issue.
+> UXCue needs access to the active page only when you capture feedback, so it can identify the selected element and take a screenshot for your review issue.
 
 GitHub copy:
 
-> Connecting GitHub lets UXLens create or link issues in repositories you choose. It is separate from your UXLens account and can be disconnected anytime.
+> Connecting GitHub lets UXCue create or link issues in repositories you choose. It is separate from your UXCue account and can be disconnected anytime.
 
 ## Open Product Questions
 

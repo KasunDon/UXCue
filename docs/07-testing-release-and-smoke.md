@@ -158,7 +158,7 @@ Steps:
 1. Launch Chrome for Testing/Chromium with built extension.
 2. Open fixture app.
 3. Open extension side panel or extension page.
-4. Assert UXLens shell appears.
+4. Assert UXCue shell appears.
 
 Pass:
 

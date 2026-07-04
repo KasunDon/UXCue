@@ -1,4 +1,4 @@
-# UXLens Agent Stories
+# UXCue Agent Stories
 
 These stories are written so coding agents can take one slice at a time. Each story should be implemented with tests appropriate to its risk.
 
@@ -16,7 +16,7 @@ Status: ready
 
 Agent prompt:
 
-> Create the UXLens monorepo scaffold with packages for the Chrome extension, cloud API, cloud console, shared schemas, Terraform, and Playwright tests.
+> Create the UXCue monorepo scaffold with packages for the Chrome extension, cloud API, cloud console, shared schemas, Terraform, and Playwright tests.
 
 Acceptance criteria:
 
@@ -29,7 +29,7 @@ Acceptance criteria:
   - `packages/markdown`
   - `packages/ui`
   - `tests/e2e`
-  - `terraform/uxlens`
+  - `terraform/uxcue`
 - Root scripts exist for build, typecheck, test, e2e, lint, format, package-extension.
 - Shared TypeScript config is used.
 - No cloud secrets or local tokens are committed.
@@ -45,7 +45,7 @@ Status: ready
 
 Agent prompt:
 
-> Implement shared UXLens TypeScript types and runtime validators for projects, sessions, issues, screenshots, exports, sync events, and GitHub links.
+> Implement shared UXCue TypeScript types and runtime validators for projects, sessions, issues, screenshots, exports, sync events, and GitHub links.
 
 Acceptance criteria:
 
@@ -236,7 +236,7 @@ Status: ready
 
 Agent prompt:
 
-> Build the issue feedback composer that appears after selection and creates a UXLens issue.
+> Build the issue feedback composer that appears after selection and creates a UXCue issue.
 
 Acceptance criteria:
 
@@ -354,7 +354,7 @@ Status: ready
 
 Agent prompt:
 
-> Create Terraform for the UXLens dev cloud stack with API Gateway, Lambda, DynamoDB, S3, Cognito, CloudFront, budgets, and outputs.
+> Create Terraform for the UXCue dev cloud stack with API Gateway, Lambda, DynamoDB, S3, Cognito, CloudFront, budgets, and outputs.
 
 Acceptance criteria:
 
@@ -457,7 +457,7 @@ Status: ready
 
 Agent prompt:
 
-> Build the UXLens Cloud console shell with Google sign-in, project list, session list, and issue list.
+> Build the UXCue Cloud console shell with Google sign-in, project list, session list, and issue list.
 
 Acceptance criteria:
 
@@ -559,13 +559,13 @@ Status: ready
 
 Agent prompt:
 
-> Create a GitHub issue from a selected UXLens issue using the documented issue template.
+> Create a GitHub issue from a selected UXCue issue using the documented issue template.
 
 Acceptance criteria:
 
 - User can preview issue title/body before creating.
 - API call creates issue with title, body, and labels when permitted.
-- UXLens stores GitHub issue number, URL, repo, and sync state.
+- UXCue stores GitHub issue number, URL, repo, and sync state.
 - Error messages distinguish auth, permission, missing repo, validation, and rate limit cases.
 
 ### UXL-GH-003: GitHub Status Sync
@@ -574,14 +574,14 @@ Status: ready
 
 Agent prompt:
 
-> Sync linked GitHub issue state back to UXLens.
+> Sync linked GitHub issue state back to UXCue.
 
 Acceptance criteria:
 
 - User can refresh GitHub status for one issue.
-- Closed GitHub issue can mark UXLens issue as fixed after user confirmation.
-- Reopened GitHub issue can mark UXLens issue as open after user confirmation.
-- Sync never deletes UXLens issues.
+- Closed GitHub issue can mark UXCue issue as fixed after user confirmation.
+- Reopened GitHub issue can mark UXCue issue as open after user confirmation.
+- Sync never deletes UXCue issues.
 
 ## Epic H: MCP And Agent Integrations
 
@@ -591,7 +591,7 @@ Status: ready
 
 Agent prompt:
 
-> Define the MCP tool surface for UXLens without implementing the server yet.
+> Define the MCP tool surface for UXCue without implementing the server yet.
 
 Acceptance criteria:
 
@@ -606,7 +606,7 @@ Status: future
 
 Agent prompt:
 
-> Build a local MCP server that exposes local exported UXLens sessions to AI coding agents.
+> Build a local MCP server that exposes local exported UXCue sessions to AI coding agents.
 
 Acceptance criteria:
 

@@ -1,14 +1,14 @@
-# UXLens MVP Breakdown
+# UXCue MVP Breakdown
 
 ## MVP Goal
 
 Build a Chrome extension and minimal cloud console that can:
 
 - Capture UI/UX defects from any webpage.
-- Create tracked UXLens issues locally.
-- Sync issues to UXLens Cloud when signed in.
+- Create tracked UXCue issues locally.
+- Sync issues to UXCue Cloud when signed in.
 - Export a review as markdown/JSON.
-- Optionally create GitHub issues from selected UXLens issues.
+- Optionally create GitHub issues from selected UXCue issues.
 - Prove the full review-to-agent workflow with Playwright smoke/e2e coverage (D007 revised).
 
 ## MVP Definition
@@ -56,7 +56,7 @@ It should be usable by the owner on real projects, produce useful agent-ready ar
 - GitHub integration:
   - separate connect flow.
   - choose repo per project.
-  - create GitHub issue manually from a UXLens issue.
+  - create GitHub issue manually from a UXCue issue.
   - store linked GitHub URL and issue number.
 - Testing:
   - Playwright smoke tests.
@@ -190,10 +190,10 @@ Deliverables:
 
 Acceptance:
 
-- User creates a GitHub issue from one UXLens issue.
-- UXLens stores repo, issue number, URL, created time.
+- User creates a GitHub issue from one UXCue issue.
+- UXCue stores repo, issue number, URL, created time.
 - Failure states show actionable errors.
-- GitHub integration can be disconnected without deleting UXLens issues.
+- GitHub integration can be disconnected without deleting UXCue issues.
 
 ### M6: MVP Hardening
 
@@ -221,9 +221,9 @@ Run a complete review against `kdon.dev`, KtKAI console, or another owned app:
 1. Create project.
 2. Create review session.
 3. Capture 10 issues across at least 4 pages.
-4. Sync to UXLens Cloud.
+4. Sync to UXCue Cloud.
 5. Export `review.md`, `review.json`, and screenshots.
-6. Create 2 GitHub issues manually from selected UXLens issues.
+6. Create 2 GitHub issues manually from selected UXCue issues.
 7. Feed the markdown review to Claude Code or Codex.
 8. Agent should locate and fix at least 8 of the 10 issues without follow-up questions.
 

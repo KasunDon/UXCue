@@ -1,14 +1,14 @@
-# UXLens Planning Pack
+# UXCue Planning Pack
 
 Date: 2026-07-04
 
-UXLens is a browser-based design QA helper for AI-assisted frontend work. It lets a reviewer click broken UI, capture rich browser context, create and track UXLens issues locally or in UXLens Cloud, and optionally sync selected issues to GitHub.
+UXCue is a browser-based design QA helper for AI-assisted frontend work. It lets a reviewer click broken UI, capture rich browser context, create and track UXCue issues locally or in UXCue Cloud, and optionally sync selected issues to GitHub.
 
-The important product decision is that UXLens owns the review workflow. GitHub is an integration, not the required system of record.
+The important product decision is that UXCue owns the review workflow. GitHub is an integration, not the required system of record.
 
 ## Product Thesis
 
-UXLens turns visual QA into agent-ready work.
+UXCue turns visual QA into agent-ready work.
 
 Reviewer workflow:
 
@@ -16,9 +16,9 @@ Reviewer workflow:
 2. Toggle capture mode in the Chrome extension.
 3. Click an element or create a page-level note.
 4. Write rough feedback.
-5. UXLens captures screenshot, URL, selector, DOM, styles, viewport, and environment.
-6. UXLens creates a tracked issue with an agent-ready markdown brief.
-7. The user keeps issues local, syncs them to UXLens Cloud, exports markdown/JSON, or creates GitHub issues.
+5. UXCue captures screenshot, URL, selector, DOM, styles, viewport, and environment.
+6. UXCue creates a tracked issue with an agent-ready markdown brief.
+7. The user keeps issues local, syncs them to UXCue Cloud, exports markdown/JSON, or creates GitHub issues.
 
 ## Planning Docs
 
@@ -55,11 +55,11 @@ The pack is now in **build mode** (D009 flipped). The authoritative work order i
 
 - Extension: Chrome Manifest V3, TypeScript, React side panel, content scripts, service worker.
 - Local data: IndexedDB for issues/screenshots, `chrome.storage.local` for preferences, `chrome.storage.sync` only for small non-sensitive preferences if needed.
-- Cloud: optional UXLens account with Google SSO through Cognito or a compatible OIDC auth layer.
+- Cloud: optional UXCue account with Google SSO through Cognito or a compatible OIDC auth layer.
 - Infra: Terraform-managed AWS serverless stack using free-tier-friendly services and budget alarms.
 - Console: web console for projects, sessions, issue review, exports, GitHub integration, account management.
-- GitHub: separate optional integration; create/link/sync GitHub issues from UXLens issues.
-- MCP: later bridge for agents to list/read/resolve UXLens issues; not required for the MVP capture loop.
+- GitHub: separate optional integration; create/link/sync GitHub issues from UXCue issues.
+- MCP: later bridge for agents to list/read/resolve UXCue issues; not required for the MVP capture loop.
 - Agent-agnostic output (D014): no vendor agent names in code, schema, or exports; role-based `assigneeHint`; `.uxcue/` repo drop-in.
 - Tests: Playwright e2e and smoke tests (D007 revised), with Chrome for Testing or Chromium for extension-loaded runs.
 

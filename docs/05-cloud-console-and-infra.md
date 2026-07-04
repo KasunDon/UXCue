@@ -2,7 +2,7 @@
 
 ## Cloud Purpose
 
-UXLens Cloud is optional. It exists to sync issues across machines, provide a web console, store screenshots, support GitHub integration, and later support team sharing.
+UXCue Cloud is optional. It exists to sync issues across machines, provide a web console, store screenshots, support GitHub integration, and later support team sharing.
 
 The extension remains useful without cloud.
 
@@ -27,7 +27,7 @@ flowchart LR
 
 ### Cognito User Pool
 
-Use for UXLens Cloud identity.
+Use for UXCue Cloud identity.
 
 Reasons:
 
@@ -37,7 +37,7 @@ Reasons:
 
 Plan:
 
-- User Pool: `uxlens-{env}`.
+- User Pool: `uxcue-{env}`.
 - Google social IdP.
 - Hosted UI or managed login.
 - App clients:
@@ -121,7 +121,7 @@ Billing mode:
 Table:
 
 ```txt
-uxlens-{env}
+uxcue-{env}
 ```
 
 Keys:
@@ -157,8 +157,8 @@ Use private S3 bucket for screenshots and export bundles.
 
 Buckets:
 
-- `uxlens-{env}-screenshots-{accountId}`
-- `uxlens-{env}-console-{accountId}`
+- `uxcue-{env}-screenshots-{accountId}`
+- `uxcue-{env}-console-{accountId}`
 
 Screenshot keys:
 
@@ -189,8 +189,8 @@ Plan:
 
 Proposed dev domains:
 
-- `uxlens.tools.ktek.cloud` for console.
-- `api.uxlens.tools.ktek.cloud` for API.
+- `uxcue.tools.ktek.cloud` for console.
+- `api.uxcue.tools.ktek.cloud` for API.
 
 This repo already has a DNS delegation model for `ktek.cloud`. Use the existing DNS writer-role pattern after the hosted zone is live.
 
@@ -226,7 +226,7 @@ Recommended layout:
 
 ```txt
 terraform/
-  uxlens/
+  uxcue/
     README.md
     versions.tf
     providers.tf
@@ -348,7 +348,7 @@ MVP default:
 - No password or cookie capture.
 - Metadata extraction should redact obvious secret-looking values in text/attributes.
 - Extension should explain each permission.
-- GitHub tokens are separate from UXLens account auth.
+- GitHub tokens are separate from UXCue account auth.
 
 ## Cost Guardrails
 

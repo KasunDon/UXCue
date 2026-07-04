@@ -38,8 +38,8 @@ Priority:
 ### GitHub
 
 - Manual GitHub connect.
-- Create GitHub issue from UXLens issue.
-- Link issue URL back to UXLens.
+- Create GitHub issue from UXCue issue.
+- Link issue URL back to UXCue.
 
 ### QA
 
@@ -84,7 +84,7 @@ Priority:
 - Create missing labels when permission allows.
 - Link existing GitHub issue.
 - Refresh linked issue state.
-- Add UXLens comment to existing GitHub issue.
+- Add UXCue comment to existing GitHub issue.
 
 ### Security/Privacy
 

@@ -1,6 +1,6 @@
-# UXLens
+# UXCue
 
-UXLens is isolated here as a documentation-only product planning workspace.
+UXCue is isolated here as a documentation-only product planning workspace.
 
 This folder currently contains markdown research, requirements, backlog, UX, testing, cloud, and launch planning. No implementation code is included.
 

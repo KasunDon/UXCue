@@ -1,8 +1,8 @@
-# UXLens Simplified UX/UI Design
+# UXCue Simplified UX/UI Design
 
 ## Design Direction
 
-UXLens should feel like a precise review instrument, not a marketing product.
+UXCue should feel like a precise review instrument, not a marketing product.
 
 For the deeper brand system, typography scale, color tokens, and "wow without noise" rules, see [18-brand-guidelines.md](18-brand-guidelines.md).
 
@@ -49,7 +49,7 @@ Target width: 360px.
 
 ```txt
 +------------------------------------+
-| UXLens          8 open      [gear] |
+| UXCue          8 open      [gear] |
 +------------------------------------+
 | Project: KtKAI Console        [v] |
 | Session: Billing polish       [v] |
@@ -241,7 +241,7 @@ The cloud console is a focused review workspace.
 
 ```txt
 +-------------------------------------------------------------+
-| UXLens       Projects   Reviews   Issues   Settings   User |
+| UXCue       Projects   Reviews   Issues   Settings   User |
 +---------------+---------------------------------------------+
 | Projects      | Billing polish                              |
 | KtKAI Console | 12 open - 3 major - last synced 2 min ago    |

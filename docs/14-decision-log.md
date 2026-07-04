@@ -2,13 +2,13 @@
 
 This file records product and architecture decisions so future planning does not loop.
 
-## D001: UXLens Owns The Issue Workflow
+## D001: UXCue Owns The Issue Workflow
 
 Status: accepted
 
 Decision:
 
-- UXLens creates and tracks its own issues.
+- UXCue creates and tracks its own issues.
 - GitHub is optional sync/export.
 - Cloud is optional sync/share.
 
@@ -18,7 +18,7 @@ Reason:
 
 Implication:
 
-- UXLens needs stable issue IDs, statuses, markdown, JSON, and local persistence.
+- UXCue needs stable issue IDs, statuses, markdown, JSON, and local persistence.
 
 ## D002: Local-First MVP
 
@@ -36,13 +36,13 @@ Implication:
 
 - IndexedDB/local storage and export quality are P0.
 
-## D003: Google SSO For UXLens Cloud
+## D003: Google SSO For UXCue Cloud
 
 Status: accepted for plan
 
 Decision:
 
-- UXLens Cloud account should support Google SSO.
+- UXCue Cloud account should support Google SSO.
 
 Reason:
 
@@ -59,7 +59,7 @@ Status: accepted
 
 Decision:
 
-- GitHub authorization is separate from UXLens Cloud identity.
+- GitHub authorization is separate from UXCue Cloud identity.
 
 Reason:
 
@@ -82,7 +82,7 @@ Decision:
 Reason:
 
 - GitHub already exposes APIs and its own MCP server.
-- UXLens MCP should expose UXLens data, not duplicate GitHub.
+- UXCue MCP should expose UXCue data, not duplicate GitHub.
 
 Implication:
 
@@ -163,7 +163,7 @@ Status: accepted
 
 Decision:
 
-- UXLens should not position as a general BugHerd/Marker.io clone.
+- UXCue should not position as a general BugHerd/Marker.io clone.
 
 Reason:
 
@@ -270,8 +270,8 @@ Implication:
 
 Options:
 
-- `uxlens.ktek.cloud`
-- `uxlens.tools.ktek.cloud`
+- `uxcue.ktek.cloud`
+- `uxcue.tools.ktek.cloud`
 - independent product domain later
 
 Default:
@@ -280,7 +280,7 @@ Default:
 
 Partial resolution — naming/npm (2026-07-04 per docs/19 F1):
 
-- npm names `uxcue` and `uxcue-mcp` confirmed unregistered (404) as of the research date — register immediately (publish placeholder 0.0.1) to prevent squatting. `uxlens` also free as a fallback.
+- npm names `uxcue` and `uxcue-mcp` confirmed unregistered (404) as of the research date — register immediately (publish placeholder 0.0.1) to prevent squatting. `uxlens` (former name) also free as a fallback.
 - GitHub org name `UXcue` is taken by a dormant account; product repos stay under `KasunDon/UXCue` or a new org (e.g., `uxcue-dev`).
 - Product-domain choice (`uxcue.com/.dev/.app`, purchase tracked as LP7-001) remains open pending purchase; record the registered domain here once bought.
 
@@ -301,7 +301,7 @@ Default:
 
 Options:
 
-- UXLens Cloud signed/share links.
+- UXCue Cloud signed/share links.
 - GitHub repo file upload.
 - Local export only.
 
@@ -337,19 +337,17 @@ Default:
 
 - Delay until capture/export/GitHub workflows are validated.
 
-### O006: Product-Name And Infra-Identifier Reconciliation (UXLens → UXCue)
+### O006: Product-Name Reconciliation (UXLens → UXCue) — RESOLVED
 
-Raised by the docs-only amendment pass (2026-07-04). Not resolved here.
+Status: RESOLVED 2026-07-04 (owner confirmed: "uxcue is the name").
 
-Context:
+Resolution:
 
-- The product is named **UXCue** (F1, docs/16–24, brand docs), but docs 01–15 and parts of 05/09/15 still say **UXLens**, and infra identifiers in docs/03 and docs/05 still use `uxlens` (`terraform/uxlens`, DynamoDB `uxlens-{env}`, buckets `uxlens-{env}-*`, Cognito `uxlens-{env}`, DNS `uxlens.tools.ktek.cloud`) while the handover §4 and docs/20/24 use `terraform/uxcue` / `uxcue.*`.
-- Doc 17 §Recommended Actions #5 and doc 18 §Recommended Update both defer the prose rename until *after* domain purchase; the schema string `uxlens/1.0` and `UX-nnn` display IDs stay unchanged deliberately (D014).
+- Product name is **UXCue**. The pack was renamed from UXLens → UXCue across docs 01–24 and both READMEs. "UXLens" now survives only as former-working-title history (this log's D009 history, docs/11 Product Name, docs/17 §Recommended Actions, docs/18 §5).
+- Deliberately preserved (D014): the portable schema string `uxlens/1.0` and the `UX-nnn` display IDs; the `uxlens` npm name as a documented fallback.
+- Infra identifiers in docs now read `uxcue-*` consistently (`terraform/uxcue`, DynamoDB `uxcue-{env}`, buckets `uxcue-{env}-*`, Cognito `uxcue-{env}`, DNS `uxcue.tools.ktek.cloud`, `api.uxcue.tools.ktek.cloud`). These are the names to apply from the first `UXL-INFRA-001` Terraform run — renaming a deployed table/bucket/pool later is costly, so they are fixed now while still docs-only.
 
-Owner decisions needed:
-
-- **Timing/scope of the prose rename** across docs 01–15 (keep `uxlens/1.0` schema and `UX-nnn` IDs; rename product prose and titles). This amendment pass intentionally did NOT do the mass rename.
-- **Infra resource names are time-sensitive.** Renaming a deployed DynamoDB table, S3 bucket, Cognito pool, or hosted zone after `UXL-INFRA-001` applies is costly. Decide `uxlens-*` vs `uxcue-*` for AWS resource names BEFORE the first Terraform apply, independent of when the docs prose is renamed.
+No open sub-items remain. Domain *purchase* is still tracked separately as LP7-001 / the O001 domain question (which registrar/TLD to buy), not a naming question.
 
 ### O007: Story-ID Scheme Reconciliation (docs/03 vs docs/12)
 

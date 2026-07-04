@@ -2,21 +2,15 @@
 
 ## Product Name
 
-Working name: UXLens
+Confirmed product name: **UXCue** (owner-confirmed 2026-07-04; resolves docs/14 O006 naming).
 
-Possible positioning names:
+Former working title: UXLens (kept only as history in docs/14, docs/17, docs/18).
 
-- UXLens
-- ReviewLens
-- DefectLens
-- AgentQA
-- PixelBrief
-
-Keep UXLens until naming collision and trademark checks are done.
+Naming rationale, domain checks, and rejected alternatives (ReviewLens, DefectLens, AgentQA, PixelBrief, QACue, BugCue) live in docs/17. Collision check cleared in docs/19 F1. Note: the portable schema string stays `uxlens/1.0` and display IDs stay `UX-nnn` by design (D014).
 
 ## Product Statement
 
-UXLens is a design QA issue tracker for AI-assisted frontend work. It lets reviewers capture UI/UX defects directly from a browser, track them locally or in UXLens Cloud, and export or sync agent-ready issues to GitHub and coding agents.
+UXCue is a design QA issue tracker for AI-assisted frontend work. It lets reviewers capture UI/UX defects directly from a browser, track them locally or in UXCue Cloud, and export or sync agent-ready issues to GitHub and coding agents.
 
 ## Primary User Story
 
@@ -50,7 +44,7 @@ Google SSO account.
 Capabilities:
 
 - Sync project/session/issue data.
-- Store screenshots in UXLens Cloud.
+- Store screenshots in UXCue Cloud.
 - View issues in cloud console.
 - Export from cloud.
 - Enable share links later.
@@ -67,7 +61,7 @@ Separate optional authorization.
 
 Capabilities:
 
-- Create GitHub issue from UXLens issue.
+- Create GitHub issue from UXCue issue.
 - Link existing GitHub issue.
 - Refresh GitHub issue state.
 - Store repo, issue number, URL, labels, and sync status.
@@ -75,7 +69,7 @@ Capabilities:
 Constraints:
 
 - GitHub is never required for capture.
-- Disconnecting GitHub does not delete UXLens issues.
+- Disconnecting GitHub does not delete UXCue issues.
 
 ### Agent/MCP Mode
 
@@ -83,7 +77,7 @@ Later phase.
 
 Capabilities:
 
-- Agent reads UXLens sessions and issues.
+- Agent reads UXCue sessions and issues.
 - Agent gets screenshot references and metadata.
 - Agent marks issue fixed or links PR/commit.
 
@@ -96,7 +90,7 @@ Constraints:
 
 ### R1: Project And Session Tracking
 
-UXLens must allow the user to create/select:
+UXCue must allow the user to create/select:
 
 - Project.
 - Review session.
@@ -109,7 +103,7 @@ Acceptance:
 
 ### R2: Element Capture
 
-UXLens must let the user select a page element.
+UXCue must let the user select a page element.
 
 Acceptance:
 
@@ -127,7 +121,7 @@ Permission note (D013, per docs/19 F5):
 
 ### R3: Feedback Composer
 
-UXLens must turn a selected element into an issue draft.
+UXCue must turn a selected element into an issue draft.
 
 Fields:
 
@@ -148,7 +142,7 @@ Acceptance:
 
 ### R4: Metadata Capture
 
-UXLens must capture enough metadata for an agent to locate and reason about the UI.
+UXCue must capture enough metadata for an agent to locate and reason about the UI.
 
 MVP fields:
 
@@ -174,7 +168,7 @@ Acceptance:
 
 ### R5: Screenshots
 
-UXLens must capture:
+UXCue must capture:
 
 - Element crop.
 - Viewport screenshot with highlighted element.
@@ -193,7 +187,7 @@ Single-capture rule (D011, per docs/19 F2):
 
 ### R6: Local Issue Workflow
 
-UXLens must behave as a small issue tracker.
+UXCue must behave as a small issue tracker.
 
 Acceptance:
 
@@ -206,7 +200,7 @@ Acceptance:
 
 ### R7: Exports
 
-UXLens must export portable artifacts.
+UXCue must export portable artifacts.
 
 Acceptance:
 
@@ -217,7 +211,7 @@ Acceptance:
 
 ### R8: Cloud Account
 
-UXLens Cloud must be optional and use Google SSO.
+UXCue Cloud must be optional and use Google SSO.
 
 Acceptance:
 
@@ -228,18 +222,18 @@ Acceptance:
 
 ### R9: GitHub Optional Integration
 
-UXLens must support creating GitHub issues later in MVP/beta.
+UXCue must support creating GitHub issues later in MVP/beta.
 
 Acceptance:
 
-- GitHub connection is separate from UXLens account.
+- GitHub connection is separate from UXCue account.
 - User previews generated issue body before creation.
-- Created GitHub issue link is stored on UXLens issue.
+- Created GitHub issue link is stored on UXCue issue.
 - Failure states are understandable.
 
 ### R10: Playwright Smoke Coverage
 
-UXLens must include smoke-level test planning (Playwright per D007 revised).
+UXCue must include smoke-level test planning (Playwright per D007 revised).
 
 Acceptance:
 
@@ -318,8 +312,8 @@ Public beta success:
 
 ## Open Questions
 
-- Should public beta require UXLens Cloud account, or allow Web Store local-only use first?
+- Should public beta require UXCue Cloud account, or allow Web Store local-only use first?
 - Should local-only GitHub use PAT, or should GitHub require cloud-backed OAuth/App from the start?
-- Should screenshots be hosted by UXLens Cloud for GitHub issues, or stored only in local export until later?
-- Should UXLens support team sharing in beta, or wait until v1?
+- Should screenshots be hosted by UXCue Cloud for GitHub issues, or stored only in local export until later?
+- Should UXCue support team sharing in beta, or wait until v1?
 - Which product domain should be used?

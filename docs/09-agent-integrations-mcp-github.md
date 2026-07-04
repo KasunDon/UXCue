@@ -2,7 +2,7 @@
 
 ## Integration Philosophy
 
-UXLens issues are the source of truth. Integrations move or expose those issues, but they do not replace them.
+UXCue issues are the source of truth. Integrations move or expose those issues, but they do not replace them.
 
 Priority order:
 
@@ -15,14 +15,14 @@ Priority order:
 
 ### MVP GitHub Flow
 
-1. User captures UXLens issue.
+1. User captures UXCue issue.
 2. User opens issue detail.
 3. User clicks `Create GitHub issue`.
-4. UXLens generates title/body/labels.
+4. UXCue generates title/body/labels.
 5. User previews and edits.
 6. User confirms.
-7. UXLens creates issue through GitHub API.
-8. UXLens stores URL, repo, issue number, and sync state.
+7. UXCue creates issue through GitHub API.
+8. UXCue stores URL, repo, issue number, and sync state.
 
 ### Auth Options
 
@@ -51,7 +51,7 @@ Good for early public beta.
 Pros:
 
 - Familiar OAuth connection.
-- Works with UXLens Cloud account.
+- Works with UXCue Cloud account.
 
 Cons:
 
@@ -93,16 +93,16 @@ Payload:
 ```json
 {
   "title": "[UI] Billing button wraps awkwardly",
-  "body": "Generated UXLens markdown body",
-  "labels": ["uxlens", "ui-defect", "severity:major"]
+  "body": "Generated UXCue markdown body",
+  "labels": ["uxcue", "ui-defect", "severity:major"]
 }
 ```
 
 Notes:
 
 - Label/assignee permissions can fail or be ignored depending on token permissions.
-- UXLens should create the issue even if optional labels fail, then record a warning.
-- Screenshots should be linked from UXLens Cloud signed/share URLs, uploaded to repo later, or omitted with local export fallback.
+- UXCue should create the issue even if optional labels fail, then record a warning.
+- Screenshots should be linked from UXCue Cloud signed/share URLs, uploaded to repo later, or omitted with local export fallback.
 
 ### Screenshot Strategy For GitHub
 
@@ -110,12 +110,12 @@ Resolved by D012 (per docs/19 F4): the GitHub API does not support issue attachm
 
 MVP:
 
-- Include UXLens Cloud screenshot links when cloud sync is enabled.
-- If local-only, include a note: `Screenshots are available in the UXLens export bundle.`
+- Include UXCue Cloud screenshot links when cloud sync is enabled.
+- If local-only, include a note: `Screenshots are available in the UXCue export bundle.`
 
 Post-MVP:
 
-- Add GitHub issue comment with images hosted by UXLens Cloud.
+- Add GitHub issue comment with images hosted by UXCue Cloud.
 - Optional repo upload under `.uxcue/screenshots/` through GitHub Contents API.
 - Optional release asset or gist only if there is a clear reason.
 
@@ -143,7 +143,7 @@ type GitHubIssueLink = {
 
 - GitHub never required for capture/export.
 - User can disconnect GitHub.
-- Disconnect does not delete UXLens issues.
+- Disconnect does not delete UXCue issues.
 - Create issue action is manual in MVP.
 - Linked issue URL is visible in extension and console.
 - GitHub API errors are understandable.
@@ -154,7 +154,7 @@ type GitHubIssueLink = {
 
 GitHub issue creation does not require MCP. Direct API is simpler.
 
-MCP becomes valuable when an AI coding agent needs to ask UXLens for:
+MCP becomes valuable when an AI coding agent needs to ask UXCue for:
 
 - Current unresolved issues.
 - Full issue metadata.
@@ -191,7 +191,7 @@ Cons:
 
 #### Cloud MCP
 
-Agent connects to UXLens Cloud MCP endpoint.
+Agent connects to UXCue Cloud MCP endpoint.
 
 Pros:
 
@@ -254,7 +254,7 @@ Cloud mode:
 User:
 
 ```txt
-Address the UXLens issues in .uxcue/review.json. Fix major issues first.
+Address the UXCue issues in .uxcue/review.json. Fix major issues first.
 ```
 
 Agent:
@@ -270,7 +270,7 @@ Agent:
 User:
 
 ```txt
-Fix UXLens UX-004 and update the linked GitHub issue.
+Fix UXCue UX-004 and update the linked GitHub issue.
 ```
 
 Agent:

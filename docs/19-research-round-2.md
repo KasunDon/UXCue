@@ -21,7 +21,7 @@ Purpose: close the highest-risk open questions from `13-validation-plan.md` (res
 Checked 2026-07-04:
 
 - Web search for "UXCue" as a software product: no collisions. All results are billiard cue extensions (irrelevant category).
-- npm registry: `uxcue` → 404 (unregistered). `uxcue-mcp` → 404. `uxlens` → also 404, useful as fallback.
+- npm registry: `uxcue` → 404 (unregistered). `uxcue-mcp` → 404. `uxlens` (former name) → also 404, useful as fallback.
 - GitHub: 3 repos matching "uxcue". One is `KasunDon/UXCue` (ours). The others are a dormant 0-star bug tracker under an org username `UXcue` and an unrelated Illustrator asset repo. No active product.
 - Adjacency note: **Appcues** (established user-onboarding SaaS with a Chrome extension) is the phonetically nearest product name. Different category (product tours vs design QA), different spelling, low confusion risk — but worth knowing it exists before trademark spend.
 
@@ -74,7 +74,7 @@ The `13-validation-plan.md` backlog asked to "check whether GitHub issue image u
 
 This **validates the pack's existing strategy** (`09-agent-integrations-mcp-github.md` and D-open O003):
 
-1. MVP local-only: GitHub issue body says screenshots live in the UXLens export bundle.
+1. MVP local-only: GitHub issue body says screenshots live in the UXCue export bundle.
 2. Cloud alpha: embed UXCue Cloud **signed/share URLs** in the issue body (`![element](https://…)` renders fine; only uploads are blocked, not hotlinks).
 3. Optional later: commit screenshots into the repo under `.uxcue/screenshots/` via the Contents API and reference raw URLs — fully supported, no session hackery.
 4. Do **not** adopt browser-automation upload tricks (ToS-gray, brittle).

@@ -591,10 +591,10 @@ Before approving a screen, ask:
 
 ## Recommended Update To Existing UX Docs
 
-When the planning pack is renamed from UXLens to UXCue:
+The planning pack has now been renamed from UXLens to UXCue (2026-07-04). Applied conventions:
 
-- Rename brand references to UXCue.
-- Keep issue IDs as `UX-001` unless another ID pattern is chosen.
+- Brand references use UXCue; "UXLens" survives only as former-working-title history.
+- Issue IDs stay `UX-001` (schema string stays `uxlens/1.0`, D014).
 - Replace older teal-only palette with the token system above.
 - Use 14px minimum extension body text.
 - Use 15px or 16px semibold issue titles.

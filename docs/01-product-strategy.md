@@ -1,20 +1,20 @@
-# UXLens Product Strategy
+# UXCue Product Strategy
 
 ## Positioning
 
-UXLens is a design QA issue tracker for AI coding workflows.
+UXCue is a design QA issue tracker for AI coding workflows.
 
 It is not primarily a project management board, generic bug tracker, or SaaS feedback widget. It is a capture-and-handoff tool for people reviewing frontend quality and for AI coding agents that need exact context to fix defects without guessing.
 
 One-line positioning:
 
-> Capture UI defects from the browser, track them as UXLens issues, and export agent-ready work to GitHub, markdown, JSON, or MCP.
+> Capture UI defects from the browser, track them as UXCue issues, and export agent-ready work to GitHub, markdown, JSON, or MCP.
 
 ## The Problem
 
 UI/UX review observations are visual, but AI coding agents usually receive text. Reviewers manually describe issues like "the button near the top right is misaligned", attach a screenshot, and hope the agent locates the right element. This causes slow review cycles, ambiguous fixes, and repeated clarification.
 
-UXLens closes that gap by capturing:
+UXCue closes that gap by capturing:
 
 - Reviewer intent: feedback, type, severity, expected outcome, suggested fix.
 - Visual evidence: selected element crop and viewport screenshot with highlight.
@@ -69,7 +69,7 @@ Needs:
 - Screenshots available locally or through signed URLs.
 - Clear actual/expected/suggested-fix sections.
 - Minimal noisy logs.
-- Status sync back to UXLens after fixes.
+- Status sync back to UXCue after fixes.
 
 ## Product Modes
 
@@ -84,7 +84,7 @@ No account required.
 
 This mode is the wedge for privacy, staging apps, localhost, and fast dogfooding.
 
-### Mode 2: UXLens Cloud
+### Mode 2: UXCue Cloud
 
 Google SSO account.
 
@@ -98,7 +98,7 @@ This is the path to a real product.
 
 Separate optional authorization.
 
-- Create GitHub issues from selected UXLens issues.
+- Create GitHub issues from selected UXCue issues.
 - Link existing GitHub issues.
 - Store GitHub URL, number, repo, sync state.
 - Pull status back from GitHub.
@@ -109,7 +109,7 @@ GitHub is an integration, not the source of truth.
 
 Optional MCP/local bridge.
 
-- AI coding agents list and retrieve UXLens issues.
+- AI coding agents list and retrieve UXCue issues.
 - Agents mark issues resolved with PR/commit links.
 - Batch work orders can be generated for a session.
 
@@ -117,18 +117,18 @@ This should come after the issue object and exports are stable.
 
 ## Differentiation
 
-UXLens competes near Marker.io, BugHerd, and AI browser/code tools. The wedge is not "more comments on screenshots"; the wedge is "visual QA issues made useful to coding agents."
+UXCue competes near Marker.io, BugHerd, and AI browser/code tools. The wedge is not "more comments on screenshots"; the wedge is "visual QA issues made useful to coding agents."
 
 Differentiators:
 
 - Local-first usage with no target-app widget.
 - Works on localhost, staging, authenticated apps, and production.
 - Works in your real browser (real profile, extensions, sessions) and produces tracked, portable issues that serve any agent — unlike editor-embedded capture (e.g., VS Code's integrated browser "Add to Chat") that welds the captured context to a single vendor's chat surface and discards it when the session ends (see docs/16, docs/23).
-- UXLens-owned issue tracker with markdown/JSON portability.
+- UXCue-owned issue tracker with markdown/JSON portability.
 - Agent-ready issue bodies instead of human-only PM tasks.
 - Optional GitHub sync instead of GitHub lock-in.
 - Metadata built for code fixes and design review.
-- Future MCP bridge focused on UXLens data, not generic GitHub operations.
+- Future MCP bridge focused on UXCue data, not generic GitHub operations.
 
 ## Product Principles
 
@@ -171,11 +171,11 @@ Public beta metrics:
 
 - Browser extension permission prompts may scare users if host permissions are too broad.
 - Screenshots are sensitive; cloud sync must be explicit and transparent.
-- GitHub screenshot attachment is awkward through API; use UXLens-hosted signed URLs or repo file uploads later.
+- GitHub screenshot attachment is awkward through API; use UXCue-hosted signed URLs or repo file uploads later.
 - React/Angular component detection is best effort and can break across framework versions.
 - Chrome extension e2e tests are trickier than normal web app tests; CI must use Chrome for Testing or Chromium.
 - AWS free-tier assumptions can drift; budgets and quotas must be part of the first Terraform module.
 
 ## Product Bet
 
-The best version of UXLens is not "BugHerd but cheaper." It is a narrow, excellent workbench for turning visual design review into fixable AI work.
+The best version of UXCue is not "BugHerd but cheaper." It is a narrow, excellent workbench for turning visual design review into fixable AI work.

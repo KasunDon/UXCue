@@ -2,7 +2,7 @@
 
 ## Purpose
 
-UXLens should be validated around one central question:
+UXCue should be validated around one central question:
 
 > Does it help an AI coding agent fix UI/UX defects with less clarification?
 
@@ -30,7 +30,7 @@ Pass:
 
 Claim:
 
-- AI coding agents can fix most captured UI defects from UXLens markdown plus screenshots without follow-up.
+- AI coding agents can fix most captured UI defects from UXCue markdown plus screenshots without follow-up.
 
 Test:
 
@@ -110,7 +110,7 @@ Recommended test targets:
 4. Capture 10 issues across at least 4 pages.
 5. Export markdown/JSON/screenshots.
 6. Feed markdown to one coding agent.
-7. Create 2 GitHub issues from selected UXLens issues.
+7. Create 2 GitHub issues from selected UXCue issues.
 8. Track outcomes:
    - fixed without clarification.
    - fixed after clarification.
@@ -236,7 +236,7 @@ Measure:
 Compare:
 
 - Create GitHub issue immediately after capture.
-- Keep in UXLens until reviewed, then create selected issues.
+- Keep in UXCue until reviewed, then create selected issues.
 
 Measure:
 
