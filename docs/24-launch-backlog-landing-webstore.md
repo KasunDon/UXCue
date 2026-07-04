@@ -1,7 +1,7 @@
 # Launch Backlog: Landing Page + Chrome Web Store Publishing
 
 Date: 2026-07-04
-Status: accepted. Merge into docs/08-public-launch-backlog.md and docs/12-prioritized-backlog.md as Release 7, and add Phase 7 to docs/21-build-handover.md §5. Decision D009 is now formally flipped: build mode is active.
+Status: accepted but **DEFERRED (D016, 2026-07-04)**. This entire release (landing page Track A + Chrome Web Store Track B) is postponed until the local-first MVP works end-to-end (docs/21 Phases 0–4) and the two-agent-family dogfood passes. Chrome Web Store publishing is tracked in **GitHub issue #1**. Content below is preserved for when Phase 7 resumes. Decision D009 is flipped: build mode is active (local-first scope).
 
 ## Release 7: Public Launch Assets
 

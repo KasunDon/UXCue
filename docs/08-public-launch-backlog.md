@@ -219,7 +219,7 @@ Port order and effort: Edge (small — same Chromium MV3; store listing + QA) �
 
 ## Release 7: Public Launch Assets (landing page + Chrome Web Store)
 
-Status: accepted (docs/24). Gate: MVP definition-of-done (docs/21 §10) passed, including the two-agent-family dogfood result. WS7-001 and LP7-001 can start immediately regardless of phase.
+Status: **DEFERRED (D016)** — postponed until the local-first MVP works end-to-end (Phases 0–4) and the two-agent-family dogfood passes. Chrome Web Store publishing tracked in **GitHub issue #1**. Gate when resumed: MVP definition-of-done (docs/21 §10) passed.
 
 ### Track A: Landing Page (uxcue.com)
 

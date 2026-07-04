@@ -49,7 +49,7 @@ Goal: capture issues locally and export agent-ready review bundles.
 
 ## Release 2: Cloud Alpha
 
-Goal: optional account and cloud sync.
+Goal: optional account and cloud sync. **DEFERRED (D016)** — not started until the local-first MVP (Release 1) works end-to-end and dogfood passes.
 
 | ID | Priority | Item | Dependencies | Acceptance |
 | --- | --- | --- | --- | --- |
@@ -130,7 +130,7 @@ Gate: Chrome Web Store listing stable ≥ 1 cycle; ≥ 20 external review sessio
 
 ## Release 7: Public Launch Assets (landing page + Web Store)
 
-Goal: ship the public-facing landing page and Chrome Web Store listing. Full backlog in docs/08 and docs/24.
+Goal: ship the public-facing landing page and Chrome Web Store listing. **DEFERRED (D016)**; Chrome Web Store publishing tracked in GitHub issue #1. Full backlog in docs/08 and docs/24.
 
 Gate: MVP definition-of-done (docs/21 §10), including two-agent-family dogfood. LP7-001 and WS7-001 can start immediately.
 

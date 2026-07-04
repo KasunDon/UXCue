@@ -264,6 +264,26 @@ Implication:
 - Adapter enforcement (lint rule blocking `chrome.*` outside the adapter) lands in `UXL-EXT-001`, not in Release 6 — it is P0 now.
 - MVP scope stays Chrome-only; this changes *how* code is written, not *what* ships first. See Release 6 in `08`/`12` for the gated port backlog.
 
+## D016: Local-First MVP First — Cloud, Launch, And Store Deferred
+
+Status: accepted (owner decision 2026-07-04)
+
+Decision:
+
+- The immediate goal is a **local-first MVP that fully works offline** (docs/21 Phases 0–4): capture, tracking, and export with no account, no cloud, no GitHub required. "Everything works locally after the build" is the bar.
+- **Phase 5 (cloud alpha)** and **Phase 7 (public launch: landing page Track A + Chrome Web Store Track B)** are **deferred**. Chrome Web Store publishing is tracked in GitHub issue #1.
+
+Reason:
+
+- Prove capture/export quality and the two-agent-family dogfood (H2) before spending on cloud infra, domains, legal pages, and store review. Local-first is the wedge (D002) and needs no external dependencies to validate.
+
+Implication:
+
+- In scope now: Phase 0 (repo+schema), Phase 1 (spikes), Phases 2–3 (extension shell, capture, issue workflow, exports), Phase 4 (dogfood).
+- Phase 6 (GitHub) stays optional: the **PAT local path** works with no cloud, but GitHub screenshot links that depend on cloud signed URLs (D012) are unavailable until Phase 5 — local export-bundle note is the fallback. Treat Phase 6 as post-local-core, owner-toggled.
+- Do not build cloud (`UXL-INFRA-*`, `UXL-CLOUD-*`, `UXL-SYNC-*`, `UXL-CONSOLE-*`, `UXL-AUTH-*`), the landing page (`LP7-*`), or the store package (`WS7-*`) until this decision is revisited. The `uxcue-*` infra names (O006) and the store checklist (issue #1) are preserved for when it is.
+- Definition of done for this milestone = docs/21 §10 items 1–3 (local capture/persistence, valid export bundle, two-agent-family dogfood). Items 4–6 (cloud, GitHub-at-scale, store/budget) move with their phases.
+
 ## Open Decisions
 
 ### O001: Product Domain

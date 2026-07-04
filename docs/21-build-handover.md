@@ -104,14 +104,14 @@ Filters/edit/status; `packages/markdown` generators with exhaustive unit tests a
 **Phase 4 — Dogfood (owner-driven)**
 Run docs/07 manual script on a real app; export; feed the bundle to **two different agent families**; record fix-without-clarification rate per agent. Iterate on export format until ≥8/10 on both. Capture UXCue's own defects with UXCue.
 
-**Phase 5 — Cloud alpha (Sessions 7+)**
-Terraform module-by-module per docs/05 (auth → data → storage → api → console → observability → budget). Infra sessions separate from extension sessions. Then extension sign-in, sync queue, revision-based conflict handling, minimal console.
+**Phase 5 — Cloud alpha (Sessions 7+) — DEFERRED (D016)**
+Not started until D016 is revisited. When resumed: Terraform module-by-module per docs/05 (auth → data → storage → api → console → observability → budget). Infra sessions separate from extension sessions. Then extension sign-in, sync queue, revision-based conflict handling, minimal console.
 
 **Phase 6 — GitHub alpha**
 Per docs/09: PAT dogfood path, repo setting per project, generated issue body (neutral wording), create + link + store URL. Screenshots: cloud signed URLs when synced, bundle note when local (D012 — API upload is platform-blocked; never browser-automation upload).
 
-**Phase 7 — Launch (post definition-of-done)**
-Per docs/24: Track A (landing page, `LP7-*`) and Track B (Chrome Web Store, `WS7-*`) run in parallel; WS7-001 and LP7-001 start immediately regardless of phase. The landing page is a separate session/worktree — a Terraform + static-site task (`terraform/uxcue/modules/landing/`), not an extension task. Store listing copy is generated from docs/17 + docs/18 and reviewed by the owner before submission. Publish unlisted first (WS7-006), then flip public after a clean soak.
+**Phase 7 — Launch (post definition-of-done) — DEFERRED (D016)**
+Not started until D016 is revisited. Chrome Web Store publishing (Track B, `WS7-*`) is tracked in GitHub issue #1. When resumed, per docs/24: Track A (landing page, `LP7-*`) and Track B (store) run in parallel; the landing page is a separate session/worktree — a Terraform + static-site task (`terraform/uxcue/modules/landing/`), not an extension task. Store listing copy is generated from docs/17 + docs/18 and reviewed by the owner before submission. Publish unlisted first (WS7-006), then flip public after a clean soak.
 
 ## 6. Testing Bar
 
