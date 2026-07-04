@@ -279,10 +279,10 @@ Reason:
 
 Implication:
 
-- In scope now: Phase 0 (repo+schema), Phase 1 (spikes), Phases 2–3 (extension shell, capture, issue workflow, exports), Phase 4 (dogfood).
-- Phase 6 (GitHub) stays optional: the **PAT local path** works with no cloud, but GitHub screenshot links that depend on cloud signed URLs (D012) are unavailable until Phase 5 — local export-bundle note is the fallback. Treat Phase 6 as post-local-core, owner-toggled.
-- Do not build cloud (`UXL-INFRA-*`, `UXL-CLOUD-*`, `UXL-SYNC-*`, `UXL-CONSOLE-*`, `UXL-AUTH-*`), the landing page (`LP7-*`), or the store package (`WS7-*`) until this decision is revisited. The `uxcue-*` infra names (O006) and the store checklist (issue #1) are preserved for when it is.
-- Definition of done for this milestone = docs/21 §10 items 1–3 (local capture/persistence, valid export bundle, two-agent-family dogfood). Items 4–6 (cloud, GitHub-at-scale, store/budget) move with their phases.
+- In scope now: Phase 0 (repo+schema), Phase 1 (spikes), Phases 2–3 (extension shell, capture, issue workflow, exports), Phase 4 (dogfood — **against the deterministic fixture app first**, per owner; a real-app dogfood target is chosen only when Phase 4 is reached).
+- **Phase 6 (GitHub) is also deferred** (owner decision 2026-07-04): the local MVP is capture + track + export only. The GitHub epic (`UXL-GH-*`) — including the PAT path — waits until this decision is revisited, alongside cloud. The export bundle remains the sole handoff surface for the local MVP.
+- Do not build GitHub (`UXL-GH-*`), cloud (`UXL-INFRA-*`, `UXL-CLOUD-*`, `UXL-SYNC-*`, `UXL-CONSOLE-*`, `UXL-AUTH-*`), the landing page (`LP7-*`), or the store package (`WS7-*`) until this decision is revisited. The `uxcue-*` infra names (O006) and the store checklist (issue #1) are preserved for when it is.
+- Definition of done for this milestone = docs/21 §10 items 1–2 (local capture/persistence, valid `uxlens/1.0` export bundle) + item 3 run against ≥2 agent families using the fixture-app review. Items 4–6 (cloud, GitHub, store/budget) move with their phases.
 
 ## Open Decisions
 
