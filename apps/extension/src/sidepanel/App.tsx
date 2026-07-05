@@ -218,9 +218,11 @@ export function App() {
             data-testid="capture-btn"
             onClick={armCapture}
             style={S.captureBtn}
-            title="Click, then click any element on the page"
+            title="Inspect &amp; capture — then click any element on the page (Alt+Shift+U)"
+            aria-label="Inspect and capture an element"
           >
-            ◎ Capture element
+            <CrosshairIcon />
+            Capture element
           </button>
           <span style={S.toolbarHint}>or right-click a page → UXCue</span>
         </div>
@@ -287,6 +289,7 @@ export function App() {
             <div style={S.meta}>
               {issue.status} · {issue.assigneeHint}
             </div>
+            <Chips issue={issue} s={S} />
           </article>
         ))}
       </main>
@@ -362,6 +365,49 @@ function Row({ children }: { children: ReactNode }) {
   return <div style={{ display: "flex", gap: 6 }}>{children}</div>;
 }
 
+/** Crosshair / "inspect element" icon for the capture action. */
+function CrosshairIcon() {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+      style={{ flexShrink: 0 }}
+    >
+      <circle cx="12" cy="12" r="6" />
+      <line x1="12" y1="1" x2="12" y2="5" />
+      <line x1="12" y1="19" x2="12" y2="23" />
+      <line x1="1" y1="12" x2="5" y2="12" />
+      <line x1="19" y1="12" x2="23" y2="12" />
+    </svg>
+  );
+}
+
+/** Attachment chips so a card shows at a glance what evidence it carries. */
+function Chips({ issue, s }: { issue: Issue; s: Record<string, CSSProperties> }) {
+  const consoleCount = issue.diagnostics?.console.length ?? 0;
+  const chips: string[] = [];
+  if (issue.screenshots.element) chips.push("📷 shot");
+  if (issue.screenshots.viewport) chips.push("🖼 page");
+  if (consoleCount) chips.push(`⌘ ${consoleCount}`);
+  if (issue.target?.selector) chips.push("⛯ element");
+  if (!chips.length) return null;
+  return (
+    <div data-testid="issue-chips" style={s.chips}>
+      {chips.map((c) => (
+        <span key={c} style={s.chip}>
+          {c}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function Empty({
   t,
   title,
@@ -434,6 +480,9 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       borderBottom: `1px solid ${t.color.border}`,
     },
     captureBtn: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 7,
       font: "inherit",
       fontSize: 14,
       fontWeight: 650,
@@ -501,6 +550,16 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
     type: { color: t.color.textMuted },
     title: { fontWeight: 650, fontSize: 15, margin: "4px 0 2px" },
     meta: { color: t.color.textMuted, fontSize: 12 },
+    chips: { display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 },
+    chip: {
+      fontSize: 11,
+      lineHeight: 1.6,
+      padding: "1px 7px",
+      borderRadius: 999,
+      background: t.color.surfaceMuted,
+      color: t.color.textMuted,
+      border: `1px solid ${t.color.border}`,
+    },
     footer: { padding: 12, borderTop: `1px solid ${t.color.border}`, display: "flex", gap: 8 },
     secondary: {
       font: "inherit",

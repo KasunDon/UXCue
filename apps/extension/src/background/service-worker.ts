@@ -63,7 +63,10 @@ platform.contextMenus.onClicked(async (menuItemId, tabId) => {
     // Inject the declared scripts now so this and future captures work.
     await platform.tabs.injectContentScripts(tabId);
     if (trigger === "CAPTURE_CONTEXT") {
-      console.warn("[uxcue] armed this tab — right-click the element again to capture it");
+      // The script wasn't loaded when the user right-clicked, so we don't know
+      // which element they meant. Arm the on-page overlay instead of asking them
+      // (via the console) to right-click again — they just click the element.
+      await platform.activeTab.injectFunction(overlayMain).catch(() => {});
     } else {
       await platform.tabs
         .sendMessage(tabId, { type: trigger } as RuntimeMessage)
