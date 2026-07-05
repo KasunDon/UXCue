@@ -43,6 +43,11 @@ export interface PlatformAdapter {
     injectScript(files: string[]): Promise<void>;
   };
 
+  capture: {
+    /** ONE captureVisibleTab per issue (D011); returns the viewport PNG. */
+    captureViewport(): Promise<Blob>;
+  };
+
   storage: {
     get<T>(key: string): Promise<T | undefined>;
     set(key: string, value: unknown): Promise<void>;

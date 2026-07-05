@@ -52,6 +52,14 @@ const chromeAdapter: PlatformAdapter = {
     },
   },
 
+  capture: {
+    async captureViewport(): Promise<Blob> {
+      const dataUrl = await chrome.tabs.captureVisibleTab({ format: "png" });
+      const res = await fetch(dataUrl);
+      return res.blob();
+    },
+  },
+
   storage: {
     async get<T>(key: string): Promise<T | undefined> {
       const out = await chrome.storage.local.get(key);
