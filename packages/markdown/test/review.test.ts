@@ -72,4 +72,16 @@ describe("renderIssueMarkdown", () => {
     expect(md).toContain("Page-level note (no element selected)");
     expect(md).not.toContain("#### Relevant Styles");
   });
+
+  it("renders an attached console section (VS Code parity)", () => {
+    const md = renderIssueMarkdown(
+      issue({
+        diagnostics: {
+          console: [{ level: "error", text: "Boom", at: "2026-07-04T20:00:00.000Z" }],
+        },
+      }),
+    );
+    expect(md).toContain("#### Console");
+    expect(md).toContain("[error] Boom");
+  });
 });

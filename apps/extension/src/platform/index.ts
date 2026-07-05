@@ -5,9 +5,16 @@
  * (Release 6) and mockable in e2e.
  */
 
-import type { ElementContext, PageContext, CaptureContext } from "@uxcue/schema";
+import type { ElementContext, PageContext, CaptureContext, ConsoleEntry } from "@uxcue/schema";
 
 export type PlatformName = "chrome" | "edge" | "firefox" | "mock";
+
+export interface AreaRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 /** Messages passed between the overlay, service worker, and side panel. */
 export type RuntimeMessage =
@@ -15,12 +22,26 @@ export type RuntimeMessage =
   | { type: "CONTENT_READY"; url: string }
   | { type: "ARM_CAPTURE" }
   | { type: "CAPTURE_CANCELLED" }
+  // SW -> content triggers (from the right-click menu)
   | { type: "CAPTURE_CONTEXT" }
+  | { type: "CAPTURE_VIEWPORT" }
+  | { type: "CAPTURE_AREA" }
+  | { type: "CAPTURE_CONSOLE" }
+  // content -> SW results
   | {
       type: "CAPTURE_SELECTED";
       element: ElementContext;
       page: PageContext;
       capture: CaptureContext;
+      console?: ConsoleEntry[];
+    }
+  | {
+      type: "CAPTURE_PAGE";
+      mode: "viewport" | "area" | "console";
+      page: PageContext;
+      capture: CaptureContext;
+      areaRect?: AreaRect;
+      console?: ConsoleEntry[];
     }
   | { type: "DRAFT_READY" };
 
@@ -53,7 +74,7 @@ export interface PlatformAdapter {
 
   contextMenus: {
     /** (Re)register menu items (removes existing first to avoid dupes). */
-    register(items: { id: string; title: string }[]): void;
+    register(items: { id: string; title: string; parentId?: string }[]): void;
     onClicked(handler: (menuItemId: string, tabId: number | undefined) => void): void;
   };
 

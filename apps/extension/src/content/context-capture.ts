@@ -1,21 +1,35 @@
 /**
- * Right-click capture content script (VS Code-style "Give feedback on this
- * element"). Runs on http/https pages so it is present when the user
- * right-clicks. It records the right-clicked element, and when the service
- * worker relays the context-menu click it extracts rich, schema-shaped metadata
- * (reusing the tested selector/metadata modules) and posts CAPTURE_SELECTED.
+ * Right-click capture content script (isolated world). Records the right-clicked
+ * element, buffers page console output (forwarded from the MAIN-world hook), and
+ * responds to the four context-menu triggers by extracting schema-shaped
+ * metadata (reusing the tested selector/metadata modules) and posting a result
+ * to the service worker.
  *
  * Content scripts are the chrome.* messaging boundary (D015 exempts src/content).
  */
+import type { ConsoleEntry } from "@uxcue/schema";
 import {
   extractElementContext,
   extractPageContext,
   extractCaptureContext,
 } from "../capture/metadata";
+import { pickArea } from "./area-overlay";
+
+const MAX_LOGS = 50;
+const recentLogs: ConsoleEntry[] = [];
+
+// Buffer console entries forwarded by the MAIN-world hook (console-hook.ts).
+window.addEventListener("message", (e) => {
+  const entry = (e.data as { __uxcueLog?: ConsoleEntry })?.__uxcueLog;
+  if (entry && typeof entry.level === "string") {
+    recentLogs.push(entry);
+    if (recentLogs.length > MAX_LOGS) recentLogs.shift();
+  }
+});
+
+const recentConsole = (): ConsoleEntry[] => recentLogs.slice(-MAX_LOGS);
 
 let lastRightClicked: Element | null = null;
-
-// Capture phase so we see the true target even if the page stops propagation.
 document.addEventListener(
   "contextmenu",
   (e) => {
@@ -25,18 +39,54 @@ document.addEventListener(
 );
 
 chrome.runtime.onMessage.addListener((message: { type?: string }) => {
-  if (message?.type !== "CAPTURE_CONTEXT") return;
-  const el = lastRightClicked;
-  if (!el) return;
+  void handle(message?.type);
+});
+
+async function handle(type: string | undefined): Promise<void> {
   try {
-    chrome.runtime.sendMessage({
-      type: "CAPTURE_SELECTED",
-      element: extractElementContext(el, window),
-      page: extractPageContext(window),
-      capture: extractCaptureContext(window),
-    });
+    const page = extractPageContext(window);
+    const capture = extractCaptureContext(window);
+
+    if (type === "CAPTURE_CONTEXT") {
+      if (!lastRightClicked) return;
+      const element = extractElementContext(lastRightClicked, window);
+      lastRightClicked = null;
+      chrome.runtime.sendMessage({
+        type: "CAPTURE_SELECTED",
+        element,
+        page,
+        capture,
+        console: recentConsole(),
+      });
+    } else if (type === "CAPTURE_VIEWPORT") {
+      chrome.runtime.sendMessage({
+        type: "CAPTURE_PAGE",
+        mode: "viewport",
+        page,
+        capture,
+        console: recentConsole(),
+      });
+    } else if (type === "CAPTURE_CONSOLE") {
+      chrome.runtime.sendMessage({
+        type: "CAPTURE_PAGE",
+        mode: "console",
+        page,
+        capture,
+        console: recentConsole(),
+      });
+    } else if (type === "CAPTURE_AREA") {
+      const rect = await pickArea();
+      if (!rect) return; // cancelled
+      chrome.runtime.sendMessage({
+        type: "CAPTURE_PAGE",
+        mode: "area",
+        page,
+        capture,
+        areaRect: rect,
+        console: recentConsole(),
+      });
+    }
   } catch {
     // never disrupt the page
   }
-  lastRightClicked = null;
-});
+}

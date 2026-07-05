@@ -87,4 +87,25 @@ describe("createIssueFromDraft", () => {
     expect(stored?.screenshots.viewport?.localBlobKey).toBe("vKey");
     expect(stored?.feedback).toBe("wraps badly");
   });
+
+  it("creates a page-level issue (no element) with attached console logs", async () => {
+    const repo = new IndexedDbRepository();
+    const project = await repo.createProject({ name: "P" });
+    const session = await repo.createSession({ projectId: project.id, name: "S" });
+    const pageDraft: CaptureDraft = {
+      page: draft().page,
+      capture: draft().capture,
+      shots: {},
+      console: [{ level: "error", text: "Boom", at: "2026-07-04T20:00:00.000Z" }],
+    };
+    const issue = await createIssueFromDraft(
+      repo,
+      { projectId: project.id, sessionId: session.id },
+      pageDraft,
+      { ...form, title: "", feedback: "console error on load" },
+    );
+    expect(issue.target).toBeUndefined();
+    expect(issue.title).toBe("Page note"); // no element + no title -> default
+    expect(issue.diagnostics?.console?.[0]?.text).toBe("Boom");
+  });
 });

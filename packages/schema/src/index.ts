@@ -20,6 +20,9 @@ import {
   zStyleContext,
   zScreenshotRef,
   zScreenshotRefs,
+  zConsoleLevel,
+  zConsoleEntry,
+  zDiagnostics,
   zGitHubIssueLink,
   zSyncState,
 } from "./schema";
@@ -52,6 +55,9 @@ export type CaptureContext = z.infer<typeof zCaptureContext>;
 export type StyleContext = z.infer<typeof zStyleContext>;
 export type ScreenshotRef = z.infer<typeof zScreenshotRef>;
 export type ScreenshotRefs = z.infer<typeof zScreenshotRefs>;
+export type ConsoleLevel = z.infer<typeof zConsoleLevel>;
+export type ConsoleEntry = z.infer<typeof zConsoleEntry>;
+export type Diagnostics = z.infer<typeof zDiagnostics>;
 export type GitHubIssueLink = z.infer<typeof zGitHubIssueLink>;
 export type SyncState = z.infer<typeof zSyncState>;
 

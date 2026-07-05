@@ -2,6 +2,7 @@ import type {
   ElementContext,
   PageContext,
   CaptureContext,
+  ConsoleEntry,
   Issue,
   IssueType,
   Severity,
@@ -13,13 +14,15 @@ import type { Repository } from "../storage/repository";
 
 /** A pending capture (post-selection, pre-save) held in chrome.storage.local. */
 export interface CaptureDraft {
-  element: ElementContext;
+  /** Absent for page-level / viewport / console-only captures. */
+  element?: ElementContext;
   page: PageContext;
   capture: CaptureContext;
   shots: {
     element?: { blobKey: string; width: number; height: number };
     viewport?: { blobKey: string; width: number; height: number };
   };
+  console?: ConsoleEntry[];
 }
 
 export const DRAFT_KEY = "captureDraft";
@@ -71,7 +74,7 @@ export async function createIssueFromDraft(
   const issue = await repo.createIssue({
     projectId: ctx.projectId,
     sessionId: ctx.sessionId,
-    title: form.title || draft.element.textSnippet || "UI issue",
+    title: form.title || draft.element?.textSnippet || "Page note",
     feedback: form.feedback,
     ...(form.expected ? { expected: form.expected } : {}),
     ...(form.suggestedFix ? { suggestedFix: form.suggestedFix } : {}),
@@ -80,8 +83,9 @@ export async function createIssueFromDraft(
     status: form.status,
     assigneeHint: form.assigneeHint,
     page: draft.page,
-    target: draft.element,
+    ...(draft.element ? { target: draft.element } : {}),
     capture: draft.capture,
+    ...(draft.console?.length ? { diagnostics: { console: draft.console } } : {}),
     screenshots: {},
   });
   const refs = screenshotRefsFromDraft(issue.displayId, draft);

@@ -31,6 +31,15 @@ export default defineManifest({
       js: ["src/content/context-capture.ts"],
       run_at: "document_idle",
     },
+    {
+      // MAIN world so it sees the page's own console; document_start to buffer
+      // from load. Injected by Chrome, so CSP-safe (not inline injection).
+      matches: ["http://*/*", "https://*/*"],
+      js: ["src/content/console-hook.ts"],
+      run_at: "document_start",
+      // @ts-expect-error `world` is a valid MV3 field missing from CRXJS's manifest types
+      world: "MAIN",
+    },
   ],
   commands: {
     "arm-capture": {

@@ -1,14 +1,14 @@
 /**
- * MV3 service worker (UXL-EXT-001 shell + UXL-EXT-004/007 capture). Talks to the
- * browser only through the platform adapter (D015).
+ * MV3 service worker: shell + capture routing (UXL-EXT-001/004/007 + #6 VS Code
+ * parity). Talks to the browser only through the platform adapter (D015).
  *
- * Capture flow (D013, docs/19 F5): the `arm-capture` command is a user gesture,
- * so it grants activeTab; the SW injects the overlay into the active tab. On
- * CAPTURE_SELECTED it takes ONE viewport screenshot, crops the element locally
- * (D011), stores both blobs, and writes a draft to storage that the side panel
- * watches to open the composer.
+ * Right-click menu -> the content script gathers metadata/console -> here we take
+ * ONE screenshot per capture (D011), store blobs, and MERGE into the current
+ * draft (attach-to-current-draft), which the side panel watches to open the
+ * composer. Alt+Shift+U overlay remains a secondary element-capture path.
  */
-import { getPlatform, type RuntimeMessage } from "../platform/index";
+import type { ElementContext } from "@uxcue/schema";
+import { getPlatform, type RuntimeMessage, type AreaRect } from "../platform/index";
 import { overlayMain } from "../content/overlay";
 import { IndexedDbRepository } from "../storage/repository";
 import { captureAndCrop } from "../capture/screenshot";
@@ -27,14 +27,28 @@ platform.commands.onCommand((command) => {
   }
 });
 
-// Right-click "Give UXCue feedback" -> ask the content script to capture the
-// element the user right-clicked (VS Code-style).
-platform.contextMenus.register([{ id: "uxcue-feedback", title: "Give UXCue feedback" }]);
+// Right-click "UXCue" submenu (VS Code parity).
+const MENU: Record<string, RuntimeMessage["type"]> = {
+  "uxcue-feedback": "CAPTURE_CONTEXT",
+  "uxcue-screenshot": "CAPTURE_VIEWPORT",
+  "uxcue-area": "CAPTURE_AREA",
+  "uxcue-console": "CAPTURE_CONSOLE",
+};
+
+platform.contextMenus.register([
+  { id: "uxcue", title: "UXCue" },
+  { id: "uxcue-feedback", title: "Give feedback on this element", parentId: "uxcue" },
+  { id: "uxcue-screenshot", title: "Add screenshot", parentId: "uxcue" },
+  { id: "uxcue-area", title: "Add area screenshot", parentId: "uxcue" },
+  { id: "uxcue-console", title: "Add console logs", parentId: "uxcue" },
+]);
+
 platform.contextMenus.onClicked((menuItemId, tabId) => {
-  if (menuItemId === "uxcue-feedback" && tabId != null) {
+  const trigger = MENU[menuItemId];
+  if (trigger && tabId != null) {
     platform.tabs
-      .sendMessage(tabId, { type: "CAPTURE_CONTEXT" })
-      .catch((e) => console.error("[uxcue] context capture", e));
+      .sendMessage(tabId, { type: trigger } as RuntimeMessage)
+      .catch((e) => console.error("[uxcue] menu", menuItemId, e));
   }
 });
 
@@ -48,46 +62,76 @@ platform.runtime.onMessage((message) => {
       void platform.activeTab.injectFunction(overlayMain);
       return { ok: true };
     case "CAPTURE_SELECTED":
-      void onCaptureSelected(m);
+      void onCapture({
+        element: m.element,
+        page: m.page,
+        capture: m.capture,
+        console: m.console,
+        shot: "element",
+      });
+      return { ok: true };
+    case "CAPTURE_PAGE":
+      void onCapture({
+        page: m.page,
+        capture: m.capture,
+        areaRect: m.areaRect,
+        console: m.console,
+        shot: m.mode,
+      });
       return { ok: true };
     default:
       return { ok: true };
   }
 });
 
-async function onCaptureSelected(
-  m: Extract<RuntimeMessage, { type: "CAPTURE_SELECTED" }>,
-): Promise<void> {
-  const dpr = m.capture.viewport.devicePixelRatio || 1;
-  const bbox = m.element.bbox.viewport;
+interface CaptureInput {
+  element?: ElementContext;
+  page: CaptureDraft["page"];
+  capture: CaptureDraft["capture"];
+  areaRect?: AreaRect;
+  console?: CaptureDraft["console"];
+  shot: "element" | "viewport" | "area" | "console";
+}
 
-  const draft: CaptureDraft = {
-    element: m.element,
-    page: m.page,
-    capture: m.capture,
+/** Take a screenshot (if any) and MERGE this capture into the current draft. */
+async function onCapture(input: CaptureInput): Promise<void> {
+  const dpr = input.capture.viewport.devicePixelRatio || 1;
+  const existing = (await platform.storage.get<CaptureDraft>(DRAFT_KEY)) ?? null;
+
+  const draft: CaptureDraft = existing ?? {
+    page: input.page,
+    capture: input.capture,
     shots: {},
   };
+  if (input.element) draft.element = input.element;
+  if (input.console?.length) draft.console = input.console;
+
+  // Region to crop: the element's bbox, or the drawn area, or none (viewport-only).
+  const bbox = input.element?.bbox.viewport ?? input.areaRect;
+  const needsShot = input.shot !== "console";
 
   try {
-    const shots = await captureAndCrop(platform, { bbox, devicePixelRatio: dpr, padding: 8 });
-    const vKey = uuid();
-    await repo.putScreenshot(vKey, shots.viewport);
-    draft.shots.viewport = {
-      blobKey: vKey,
-      width: Math.round(m.capture.viewport.width * dpr),
-      height: Math.round(m.capture.viewport.height * dpr),
-    };
-    if (shots.element) {
-      const eKey = uuid();
-      await repo.putScreenshot(eKey, shots.element);
-      draft.shots.element = {
-        blobKey: eKey,
-        width: Math.round(bbox.width * dpr),
-        height: Math.round(bbox.height * dpr),
+    if (needsShot) {
+      const shots = await captureAndCrop(platform, { bbox, devicePixelRatio: dpr, padding: 8 });
+      const vKey = uuid();
+      await repo.putScreenshot(vKey, shots.viewport);
+      draft.shots.viewport = {
+        blobKey: vKey,
+        width: Math.round(input.capture.viewport.width * dpr),
+        height: Math.round(input.capture.viewport.height * dpr),
       };
+      if (shots.element && bbox) {
+        const eKey = uuid();
+        await repo.putScreenshot(eKey, shots.element);
+        draft.shots.element = {
+          blobKey: eKey,
+          width: Math.round(bbox.width * dpr),
+          height: Math.round(bbox.height * dpr),
+        };
+      }
     }
   } catch {
-    // screenshot failed (quota etc.) — save a metadata-only draft (R5)
+    // screenshot failed (quota etc.) — keep the metadata-only draft (R5)
   }
 
   await platform.storage.set(DRAFT_KEY, draft);

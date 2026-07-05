@@ -204,6 +204,22 @@ export const zScreenshotRefs = z.object({
 });
 
 // ---------------------------------------------------------------------------
+// Diagnostics (VS Code parity: attached page console output)
+// ---------------------------------------------------------------------------
+
+export const zConsoleLevel = z.enum(["log", "info", "warn", "error", "debug"]);
+
+export const zConsoleEntry = z.object({
+  level: zConsoleLevel,
+  text: z.string(),
+  at: zIsoDate,
+});
+
+export const zDiagnostics = z.object({
+  console: z.array(zConsoleEntry),
+});
+
+// ---------------------------------------------------------------------------
 // Entities
 // ---------------------------------------------------------------------------
 
@@ -261,6 +277,7 @@ export const zIssue = z.object({
   target: zElementContext.optional(),
   capture: zCaptureContext,
   screenshots: zScreenshotRefs,
+  diagnostics: zDiagnostics.optional(),
   github: zGitHubIssueLink.optional(),
   sync: zSyncState.optional(),
 

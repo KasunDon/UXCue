@@ -48,7 +48,12 @@ const chromeAdapter: PlatformAdapter = {
     register(items) {
       chrome.contextMenus.removeAll(() => {
         for (const item of items) {
-          chrome.contextMenus.create({ id: item.id, title: item.title, contexts: ["all"] });
+          chrome.contextMenus.create({
+            id: item.id,
+            title: item.title,
+            contexts: ["all"],
+            ...(item.parentId ? { parentId: item.parentId } : {}),
+          });
         }
       });
     },

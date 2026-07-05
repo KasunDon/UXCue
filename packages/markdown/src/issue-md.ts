@@ -55,6 +55,13 @@ export function renderIssueBlock(issue: Issue): string {
   ].filter((x): x is string => x !== null);
   if (shots.length) lines.push("#### Screenshots", "", ...shots, "");
 
+  const logs = issue.diagnostics?.console;
+  if (logs?.length) {
+    lines.push("#### Console", "", "```text");
+    for (const entry of logs) lines.push(`[${entry.level}] ${entry.text}`);
+    lines.push("```", "");
+  }
+
   return lines.join("\n").trimEnd() + "\n";
 }
 

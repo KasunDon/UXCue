@@ -32,7 +32,7 @@ export function Composer({
   onDiscard: () => void;
 }) {
   const [form, setForm] = useState<ComposerForm>({
-    title: draft.element.textSnippet?.slice(0, 60) ?? "",
+    title: draft.element?.textSnippet?.slice(0, 60) ?? "",
     feedback: "",
     type: "visual-defect",
     severity: "minor",
@@ -65,14 +65,25 @@ export function Composer({
         </div>
 
         <div style={S.target}>
-          <code style={{ fontFamily: tokens.fontMono, fontSize: 12 }}>
-            {draft.element.selector}
-          </code>
-          <span style={{ color: tokens.color.textMuted, fontSize: 12 }}>
-            {" "}
-            · {draft.element.selectorStatus}
-            {draft.shots.element ? " · screenshot ✓" : " · no screenshot"}
-          </span>
+          {draft.element ? (
+            <code style={{ fontFamily: tokens.fontMono, fontSize: 12 }}>
+              {draft.element.selector} · {draft.element.selectorStatus}
+            </code>
+          ) : (
+            <span style={{ fontSize: 12 }}>Page-level capture · {draft.page.pathname}</span>
+          )}
+          <div
+            data-testid="composer-attachments"
+            style={{ color: tokens.color.textMuted, fontSize: 12, marginTop: 4 }}
+          >
+            {[
+              draft.shots.element && "cropped shot",
+              draft.shots.viewport && "viewport shot",
+              draft.console?.length ? `${draft.console.length} console line(s)` : null,
+            ]
+              .filter(Boolean)
+              .join(" · ") || "no attachments"}
+          </div>
         </div>
 
         <label style={S.label}>Title</label>
