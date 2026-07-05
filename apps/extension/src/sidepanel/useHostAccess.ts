@@ -4,12 +4,14 @@ import { getPlatform } from "../platform/index";
 const platform = getPlatform();
 
 /**
- * chrome.tabs.captureVisibleTab needs broad host access (activeTab or all-sites);
- * a single-origin grant isn't sufficient. So we request the whole optional set
- * once. It's an opt-in runtime grant (never a static all-sites permission), and
- * only the screenshot features need it — capture/track/export work without it.
+ * chrome.tabs.captureVisibleTab requires the literal <all_urls> (or activeTab)
+ * permission — a host-list like http/https does NOT satisfy its check ("Either
+ * the '<all_urls>' or 'activeTab' permission is required"). A side-panel click
+ * can't grant activeTab, so we request <all_urls> once. It's an opt-in runtime
+ * grant (never a static all-sites permission); only screenshots need it —
+ * capture/track/export work without it.
  */
-const CAPTURE_HOSTS = ["http://*/*", "https://*/*"];
+const CAPTURE_HOSTS = ["<all_urls>"];
 
 /**
  * Per-review capture access. Screenshots need host access for the reviewed page,

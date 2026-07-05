@@ -30,12 +30,13 @@ export default defineManifest({
   // Static host grants stay minimal: GitHub API + where committed screenshots
   // resolve (#9). NO static all-sites grant.
   host_permissions: ["https://api.github.com/*", "https://raw.githubusercontent.com/*"],
-  // Per-site opt-in: captureVisibleTab needs host access for the reviewed page,
-  // which a side-panel click can't grant via activeTab. We request the *current*
-  // origin at runtime from the user gesture, so the user approves each site
-  // (never a static all-sites grant). Anticipated by D013's per-site follow-up.
+  // Opt-in capture access: chrome.tabs.captureVisibleTab requires the literal
+  // <all_urls> (or activeTab) permission — a per-origin/host-list grant does NOT
+  // satisfy its check, and a side-panel click can't grant activeTab. So <all_urls>
+  // is declared OPTIONAL and requested at runtime from the user gesture (never a
+  // STATIC all-sites grant; declining leaves capture/track/export fully working).
   // @ts-expect-error `optional_host_permissions` is valid MV3, missing from CRXJS's types
-  optional_host_permissions: ["http://*/*", "https://*/*"],
+  optional_host_permissions: ["<all_urls>"],
   content_scripts: [
     {
       // Isolated world: right-click capture + buffers uncaught errors/rejections.

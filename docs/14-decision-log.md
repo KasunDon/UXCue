@@ -240,6 +240,23 @@ Mitigations / still-true constraints:
 - **Follow-up (privacy wedge):** offer a per-site opt-in variant — register the `context-capture` content script only on origins the user grants via `chrome.permissions.request` — so the default install can stay minimal-permission for the Web Store story. Tracked for hardening/Phase 7.
 - Web Store permission justifications (WS7-003) must now cover `scripting`, `contextMenus`, and the host content script.
 
+### D013 amendment (2026-07-05): optional `<all_urls>` + `tabs` for side-panel screenshots
+
+Screenshots (`chrome.tabs.captureVisibleTab`) triggered from the **side panel** fail
+with *"Either the '<all_urls>' or 'activeTab' permission is required"*. A side-panel
+button is not an `activeTab`-granting gesture, and Chrome's check accepts **only the
+literal `<all_urls>`** — a per-origin or `http/https` host-list grant does **not**
+satisfy it. Resolution:
+
+- `<all_urls>` is declared in **`optional_host_permissions`** (NOT `permissions`/`host_permissions`)
+  and requested at runtime via `chrome.permissions.request` from the user gesture
+  (`useHostAccess`). Added `tabs` to read the active tab's origin for display.
+- This preserves the D013 wedge in spirit: **no STATIC all-sites grant**, no install-time
+  all-sites warning; the grant is explicit, revocable, and **opt-in** — declining leaves
+  capture/track/export fully working (screenshots degrade to metadata-only).
+- The keyboard command / right-click paths still use `activeTab` and need no grant.
+- WS7-003 justifications must now also cover optional `<all_urls>` (screenshot capture) and `tabs`.
+
 ## D014: Agent-Agnostic By Design
 
 Status: accepted (2026-07-04 per docs/21 §1)
