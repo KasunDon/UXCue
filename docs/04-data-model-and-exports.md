@@ -18,6 +18,7 @@ Rules:
 - Cloud IDs may exist, but must not replace local issue IDs in exports.
 - Every exported issue must have a human-readable markdown representation.
 - Binary screenshots are referenced by manifest entries, not embedded in `review.json`.
+- Exception — **inline export mode** (#7): an optional single self-contained `review.inline.md` embeds screenshots as base64 `data:image/png` URIs (`![](data:…)`) so the whole review is one paste-able text artifact. The default file-based bundle (zip / `.uxcue/`) is unchanged; `review.json` still never embeds binaries. Note: GitHub sanitizes `data:` image URIs, so inline `.md` is for local/agent use, not GitHub issue bodies (see docs/09 / issue #9).
 - Breaking schema changes require a new schema version and importer.
 
 ## Core Entities

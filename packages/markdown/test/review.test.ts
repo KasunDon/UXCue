@@ -73,6 +73,15 @@ describe("renderIssueMarkdown", () => {
     expect(md).not.toContain("#### Relevant Styles");
   });
 
+  it("embeds base64 images inline when given an images map (#7)", () => {
+    const dataUrl = "data:image/png;base64,iVBORw0KGgoAAA==";
+    const md = renderIssueMarkdown(issue(), { images: { "UX-001-element.png": dataUrl } });
+    expect(md).toContain(`![UX-001 element](${dataUrl})`);
+    expect(md).not.toContain("- Element: `screenshots/UX-001-element.png`");
+    // a ref without a data URL still falls back to the file link
+    expect(md).toContain("- Viewport: `screenshots/UX-001-viewport.png`");
+  });
+
   it("renders an attached console section (VS Code parity)", () => {
     const md = renderIssueMarkdown(
       issue({

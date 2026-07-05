@@ -11,7 +11,7 @@ import type { Tokens } from "@uxcue/ui";
 import { getPlatform } from "../platform/index";
 import { DRAFT_KEY, type CaptureDraft } from "../capture/draft";
 import { repo } from "./repo";
-import { exportSession } from "./download";
+import { exportSession, exportSessionInline } from "./download";
 import { Composer } from "./Composer";
 import { IssueDetail } from "./IssueDetail";
 import { useTheme } from "./theme";
@@ -113,6 +113,16 @@ export function App() {
       if (warnings.staleSelectors.length)
         notes.push(`${warnings.staleSelectors.length} non-unique selector(s)`);
       if (notes.length) alert(`Review exported with warnings: ${notes.join(", ")}.`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onExportInline() {
+    if (!project || !session) return;
+    setBusy(true);
+    try {
+      await exportSessionInline(repo, project, session);
     } finally {
       setBusy(false);
     }
@@ -274,7 +284,16 @@ export function App() {
             disabled={busy || filtered.length === 0}
             style={S.primary}
           >
-            {busy ? "Exporting…" : "Export review"}
+            {busy ? "Exporting…" : "Export review (.zip)"}
+          </button>
+          <button
+            data-testid="export-inline"
+            onClick={onExportInline}
+            disabled={busy || filtered.length === 0}
+            title="One self-contained .md with images embedded as base64"
+            style={S.secondary}
+          >
+            Inline .md
           </button>
         </footer>
       )}
@@ -457,7 +476,19 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
     type: { color: t.color.textMuted },
     title: { fontWeight: 650, fontSize: 15, margin: "4px 0 2px" },
     meta: { color: t.color.textMuted, fontSize: 12 },
-    footer: { padding: 12, borderTop: `1px solid ${t.color.border}` },
+    footer: { padding: 12, borderTop: `1px solid ${t.color.border}`, display: "flex", gap: 8 },
+    secondary: {
+      font: "inherit",
+      fontSize: 14,
+      fontWeight: 650,
+      padding: "8px 12px",
+      borderRadius: t.radius,
+      border: `1px solid ${t.color.border}`,
+      background: t.color.surface,
+      color: t.color.text,
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+    },
     banner: {
       padding: "10px 12px",
       background: t.color.attention,
@@ -474,7 +505,7 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       flexDirection: "column",
     },
     primary: {
-      width: "100%",
+      flex: 1,
       font: "inherit",
       fontSize: 14,
       fontWeight: 650,
