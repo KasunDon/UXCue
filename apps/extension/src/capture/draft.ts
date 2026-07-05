@@ -23,6 +23,8 @@ export interface CaptureDraft {
     viewport?: { blobKey: string; width: number; height: number };
   };
   console?: ConsoleEntry[];
+  /** Last screenshot failure reason (surfaced in the composer), if any. */
+  lastCaptureError?: string;
 }
 
 export const DRAFT_KEY = "captureDraft";

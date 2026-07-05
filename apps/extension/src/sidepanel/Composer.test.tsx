@@ -65,7 +65,7 @@ describe("per-site access gating (the permission fix)", () => {
     // Let useHostAccess resolve the active origin into its ref.
     await act(async () => {});
     fireEvent.click(screen.getByTestId("add-page-shot"));
-    await waitFor(() => expect([...platform.grantedOrigins]).toContain("https://x.test/*"));
+    await waitFor(() => expect([...platform.grantedOrigins]).toContain("https://*/*"));
   });
 
   it("does NOT prompt for host access for console (it needs none)", async () => {

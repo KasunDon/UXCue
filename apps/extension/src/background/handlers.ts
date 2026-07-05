@@ -114,6 +114,7 @@ export function createHandlers(platform: PlatformAdapter, repo: Repository) {
           height: Math.round(input.capture.viewport.height * dpr),
         };
         result.viewportShot = true;
+        delete draft.lastCaptureError;
         if (shots.element && bbox) {
           const eKey = uuid();
           await repo.putScreenshot(eKey, shots.element);
@@ -124,10 +125,12 @@ export function createHandlers(platform: PlatformAdapter, repo: Repository) {
           };
           result.elementShot = true;
         }
-      } catch {
-        // Screenshot failed (no activeTab/host for this page, or quota). Keep
-        // the metadata-only draft (R5) so the issue can still be created.
+      } catch (e) {
+        // Screenshot failed (no host access for this page, or quota). Keep the
+        // metadata-only draft (R5) so the issue can still be created, and surface
+        // the real reason to the composer.
         result.screenshotFailed = true;
+        draft.lastCaptureError = e instanceof Error ? e.message : String(e);
       }
     }
 

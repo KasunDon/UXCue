@@ -293,9 +293,9 @@ export function Composer({
             {pending === "console" ? "⌘ Grabbing…" : "⌘ Console"}
           </button>
         </div>
-        {hint && (
+        {(draft.lastCaptureError || hint) && (
           <p data-testid="composer-hint" style={S.hint}>
-            {hint}
+            {draft.lastCaptureError ? `Screenshot failed: ${draft.lastCaptureError}` : hint}
           </p>
         )}
 
