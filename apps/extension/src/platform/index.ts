@@ -15,6 +15,7 @@ export type RuntimeMessage =
   | { type: "CONTENT_READY"; url: string }
   | { type: "ARM_CAPTURE" }
   | { type: "CAPTURE_CANCELLED" }
+  | { type: "CAPTURE_CONTEXT" }
   | {
       type: "CAPTURE_SELECTED";
       element: ElementContext;
@@ -48,6 +49,17 @@ export interface PlatformAdapter {
 
   commands: {
     onCommand(handler: (command: string) => void): void;
+  };
+
+  contextMenus: {
+    /** (Re)register menu items (removes existing first to avoid dupes). */
+    register(items: { id: string; title: string }[]): void;
+    onClicked(handler: (menuItemId: string, tabId: number | undefined) => void): void;
+  };
+
+  tabs: {
+    /** Message a content script in a specific tab (right-click capture). */
+    sendMessage(tabId: number, message: RuntimeMessage): Promise<void>;
   };
 
   /** Run code in the ACTIVE tab under activeTab (no host perms, D013). */

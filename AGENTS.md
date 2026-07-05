@@ -21,8 +21,10 @@ docs/19-research-round-2.md, and the assigned story in docs/03.
 ## Non-negotiables (defects if violated)
 
 - Local-first: capture/track/export works offline, no account.
-- Manifest permissions: activeTab, commands, sidePanel, storage, downloads.
-  Never <all_urls> or default host_permissions (D013).
+- Manifest permissions: activeTab, scripting, contextMenus, commands,
+  sidePanel, storage, downloads + an http/https content script for right-click
+  capture (D013 amended 2026-07-05). Still no <all_urls> in permissions;
+  per-site opt-in for the content script is a follow-up.
 - ONE captureVisibleTab call per issue; crop locally (2/sec hard quota) (D011).
 - Overlay in closed shadow DOM; never persistently mutate reviewed pages.
 - Schema uxlens/1.0; stable UX-nnn IDs; no renumbering (D006).

@@ -44,6 +44,27 @@ const chromeAdapter: PlatformAdapter = {
     },
   },
 
+  contextMenus: {
+    register(items) {
+      chrome.contextMenus.removeAll(() => {
+        for (const item of items) {
+          chrome.contextMenus.create({ id: item.id, title: item.title, contexts: ["all"] });
+        }
+      });
+    },
+    onClicked(handler) {
+      chrome.contextMenus.onClicked.addListener((info, tab) => {
+        handler(String(info.menuItemId), tab?.id);
+      });
+    },
+  },
+
+  tabs: {
+    async sendMessage(tabId, message) {
+      await chrome.tabs.sendMessage(tabId, message);
+    },
+  },
+
   activeTab: {
     async injectScript(files: string[]) {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });

@@ -226,6 +226,20 @@ Implication:
 - Multi-page review re-arms capture per page via a user gesture; the side panel (extension UI) persists across navigation, so the session persists even though the page grant does not.
 - The minimal-permission model is the single biggest de-risker for Web Store review; protect it against scope creep.
 
+### D013 amendment (2026-07-05): scripting + contextMenus + host content script
+
+Owner requested **VS Code-style right-click capture** ("right-click any element → give feedback"). That requires a content script present on the page *before* the right-click (to know which element was clicked), which cannot be delivered by `activeTab` alone. Amended permission model:
+
+- Added `scripting` (enables `chrome.scripting.executeScript` — the overlay path; `activeTab` alone does NOT enable the scripting API, which is why the overlay silently failed before this fix).
+- Added `contextMenus` (the right-click "Give UXCue feedback" item).
+- Added a content script matching `http://*/*` + `https://*/*` (the `context-capture` script). This grants broad host access and DOES add the "read and change data on all websites" install warning — a real relaxation of the original minimal-permission wedge.
+
+Mitigations / still-true constraints:
+
+- No `<all_urls>` in `permissions`; still no arbitrary `host_permissions` block. Local-first, redaction, and explicit-cloud-sync (D002/privacy) are unchanged.
+- **Follow-up (privacy wedge):** offer a per-site opt-in variant — register the `context-capture` content script only on origins the user grants via `chrome.permissions.request` — so the default install can stay minimal-permission for the Web Store story. Tracked for hardening/Phase 7.
+- Web Store permission justifications (WS7-003) must now cover `scripting`, `contextMenus`, and the host content script.
+
 ## D014: Agent-Agnostic By Design
 
 Status: accepted (2026-07-04 per docs/21 §1)

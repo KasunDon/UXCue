@@ -22,7 +22,20 @@ let pings = 0;
 platform.sidePanel.openOnActionClick(true).catch(() => {});
 
 platform.commands.onCommand((command) => {
-  if (command === "arm-capture") void platform.activeTab.injectFunction(overlayMain);
+  if (command === "arm-capture") {
+    platform.activeTab.injectFunction(overlayMain).catch((e) => console.error("[uxcue] arm", e));
+  }
+});
+
+// Right-click "Give UXCue feedback" -> ask the content script to capture the
+// element the user right-clicked (VS Code-style).
+platform.contextMenus.register([{ id: "uxcue-feedback", title: "Give UXCue feedback" }]);
+platform.contextMenus.onClicked((menuItemId, tabId) => {
+  if (menuItemId === "uxcue-feedback" && tabId != null) {
+    platform.tabs
+      .sendMessage(tabId, { type: "CAPTURE_CONTEXT" })
+      .catch((e) => console.error("[uxcue] context capture", e));
+  }
 });
 
 platform.runtime.onMessage((message) => {
