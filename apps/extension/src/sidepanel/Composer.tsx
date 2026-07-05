@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import type { IssueType, Severity } from "@uxcue/schema";
 import type { Tokens } from "@uxcue/ui";
 import { getPlatform } from "../platform/index";
@@ -52,8 +52,52 @@ export function Composer({
   const set = <K extends keyof ComposerForm>(k: K, v: ComposerForm[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  const add = (action: "viewport" | "area" | "console") =>
+  const elKey = draft.shots.element?.blobKey;
+  const vpKey = draft.shots.viewport?.blobKey;
+  const consoleCount = draft.console?.length ?? 0;
+  const [thumbs, setThumbs] = useState<{ element?: string; viewport?: string }>({});
+  const [flash, setFlash] = useState<null | "shot" | "console">(null);
+  const [pending, setPending] = useState<null | "viewport" | "area" | "console">(null);
+
+  // Load thumbnails for whatever the draft currently holds (live-updates as
+  // the service worker merges new captures into the draft in storage).
+  useEffect(() => {
+    let urls: string[] = [];
+    void (async () => {
+      const out: { element?: string; viewport?: string } = {};
+      if (elKey) {
+        const b = await repo.getScreenshot(elKey);
+        if (b) out.element = URL.createObjectURL(b);
+      }
+      if (vpKey) {
+        const b = await repo.getScreenshot(vpKey);
+        if (b) out.viewport = URL.createObjectURL(b);
+      }
+      urls = [out.element, out.viewport].filter((x): x is string => !!x);
+      setThumbs(out);
+    })();
+    return () => urls.forEach(URL.revokeObjectURL);
+  }, [elKey, vpKey]);
+
+  // Flash the newly-added attachment so a button click visibly registers.
+  const seen = useRef({ shots: (elKey ? 1 : 0) + (vpKey ? 1 : 0), console: consoleCount });
+  useEffect(() => {
+    const shots = (elKey ? 1 : 0) + (vpKey ? 1 : 0);
+    if (shots > seen.current.shots) setFlash("shot");
+    else if (consoleCount > seen.current.console) setFlash("console");
+    else return;
+    seen.current = { shots, console: consoleCount };
+    setPending(null);
+    const id = setTimeout(() => setFlash(null), 1000);
+    return () => clearTimeout(id);
+  }, [elKey, vpKey, consoleCount]);
+
+  const add = (action: "viewport" | "area" | "console") => {
+    setPending(action);
     void platform.runtime.send({ type: "TRIGGER_ACTIVE", action });
+  };
+
+  const hasAny = !!elKey || !!vpKey || consoleCount > 0;
 
   async function save() {
     if (!form.feedback.trim()) return;
@@ -65,15 +109,6 @@ export function Composer({
       setSaving(false);
     }
   }
-
-  const attachments =
-    [
-      draft.shots.element && "cropped shot",
-      draft.shots.viewport && "page shot",
-      draft.console?.length ? `${draft.console.length} console line(s)` : null,
-    ]
-      .filter(Boolean)
-      .join(" · ") || "no attachments yet";
 
   return (
     <div style={S.backdrop} data-testid="composer">
@@ -93,9 +128,49 @@ export function Composer({
           ) : (
             <span style={{ fontSize: 13 }}>Page-level capture · {draft.page.pathname}</span>
           )}
-          <div data-testid="composer-attachments" style={S.attach}>
-            {attachments}
-          </div>
+        </div>
+
+        <label style={S.label}>Context added to this issue</label>
+        <div data-testid="composer-attachments" style={S.previews}>
+          {!hasAny && (
+            <span style={S.attachEmpty}>
+              No screenshots or logs yet — use the buttons below to add context.
+            </span>
+          )}
+          {thumbs.element && (
+            <Thumb
+              testid="preview-element"
+              src={thumbs.element}
+              label="Cropped element"
+              dim={draft.shots.element}
+              flash={flash === "shot"}
+              s={S}
+            />
+          )}
+          {thumbs.viewport && (
+            <Thumb
+              testid="preview-viewport"
+              src={thumbs.viewport}
+              label="Full page"
+              dim={draft.shots.viewport}
+              flash={flash === "shot"}
+              s={S}
+            />
+          )}
+          {consoleCount > 0 && (
+            <div
+              data-testid="preview-console"
+              style={{ ...S.consoleCard, ...(flash === "console" ? S.flash : {}) }}
+            >
+              <div style={S.consoleHead}>⌘ {consoleCount} console line(s) attached</div>
+              <pre style={S.consolePre}>
+                {draft
+                  .console!.slice(-4)
+                  .map((c) => `${c.level}: ${c.text}`)
+                  .join("\n")}
+              </pre>
+            </div>
+          )}
         </div>
 
         <label style={S.label}>Title</label>
@@ -149,16 +224,31 @@ export function Composer({
           </Field>
         </div>
 
-        <label style={S.label}>Add to this issue</label>
+        <label style={S.label}>Add more context</label>
         <div style={S.addRow}>
-          <button data-testid="add-page-shot" onClick={() => add("viewport")} style={S.addBtn}>
-            📷 Page shot
+          <button
+            data-testid="add-page-shot"
+            onClick={() => add("viewport")}
+            disabled={pending === "viewport"}
+            style={S.addBtn}
+          >
+            {pending === "viewport" ? "📷 Capturing…" : "📷 Page shot"}
           </button>
-          <button data-testid="add-area-shot" onClick={() => add("area")} style={S.addBtn}>
-            ▭ Area shot
+          <button
+            data-testid="add-area-shot"
+            onClick={() => add("area")}
+            disabled={pending === "area"}
+            style={S.addBtn}
+          >
+            {pending === "area" ? "▭ Select area…" : "▭ Area shot"}
           </button>
-          <button data-testid="add-console" onClick={() => add("console")} style={S.addBtn}>
-            ⌘ Console
+          <button
+            data-testid="add-console"
+            onClick={() => add("console")}
+            disabled={pending === "console"}
+            style={S.addBtn}
+          >
+            {pending === "console" ? "⌘ Grabbing…" : "⌘ Console"}
           </button>
         </div>
 
@@ -172,6 +262,36 @@ export function Composer({
             {saving ? "Saving…" : "Save issue"}
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function Thumb({
+  src,
+  label,
+  dim,
+  flash,
+  testid,
+  s,
+}: {
+  src: string;
+  label: string;
+  dim?: { width: number; height: number };
+  flash: boolean;
+  testid?: string;
+  s: Record<string, CSSProperties>;
+}) {
+  return (
+    <div data-testid={testid} style={{ ...s.thumbCard, ...(flash ? s.flash : {}) }}>
+      <img src={src} alt={label} style={s.thumbImg} />
+      <div style={s.thumbMeta}>
+        <span>{label}</span>
+        {dim && (
+          <span style={s.thumbDim}>
+            {dim.width}×{dim.height}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -230,7 +350,48 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       overflowX: "auto",
       whiteSpace: "nowrap",
     },
-    attach: { color: t.color.textMuted, fontSize: 13, marginTop: 4 },
+    previews: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 4 },
+    attachEmpty: { color: t.color.textMuted, fontSize: 13 },
+    thumbCard: {
+      width: 96,
+      border: `1px solid ${t.color.border}`,
+      borderRadius: t.radius,
+      overflow: "hidden",
+      background: t.color.surfaceMuted,
+      transition: "box-shadow .2s, border-color .2s",
+    },
+    thumbImg: { width: "100%", height: 60, objectFit: "cover", display: "block" },
+    thumbMeta: {
+      display: "flex",
+      justifyContent: "space-between",
+      gap: 4,
+      padding: "3px 6px",
+      fontSize: 11,
+      color: t.color.textMuted,
+    },
+    thumbDim: { fontFamily: t.fontMono },
+    consoleCard: {
+      flex: "1 1 100%",
+      border: `1px solid ${t.color.border}`,
+      borderRadius: t.radius,
+      background: t.color.surfaceMuted,
+      overflow: "hidden",
+      transition: "box-shadow .2s, border-color .2s",
+    },
+    consoleHead: { fontSize: 12, fontWeight: 650, padding: "5px 8px" },
+    consolePre: {
+      margin: 0,
+      padding: "6px 8px",
+      fontSize: 11,
+      fontFamily: t.fontMono,
+      whiteSpace: "pre-wrap",
+      wordBreak: "break-word",
+      maxHeight: 84,
+      overflowY: "auto",
+      color: t.color.text,
+      borderTop: `1px solid ${t.color.border}`,
+    },
+    flash: { borderColor: t.color.primary, boxShadow: `0 0 0 2px ${t.color.primary}55` },
     label: { display: "block", fontSize: 13, fontWeight: 650, margin: "10px 0 4px" },
     input: {
       width: "100%",
