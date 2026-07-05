@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <nav class="app-nav">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/settings/billing">Billing</a>
+      <a href="/settings/profile">Profile</a>
+      <a href="/responsive">Responsive</a>
+    </nav>
+    <div class="hero"><h1>Dashboard</h1></div>
+
+    <!-- DEFECT: 2px grid gap makes the cards look cramped/uneven -->
+    <ul class="grid">
+      <li class="card"><span class="metric">12</span> Open</li>
+      <li class="card"><span class="metric">34</span> Fixed</li>
+      <li class="card"><span class="metric">56</span> Ignored</li>
+    </ul>
+
+    <!-- DEFECT: element with a build-generated-looking id (must NOT be trusted as selector) -->
+    <div id="ember-a3f9c8e1b2d4">
+      <!-- DEFECT: duplicate class lists require an nth fallback -->
+      <ul>
+        <li class="row"><a class="row-link" href="#">Row A</a></li>
+        <li class="row"><a class="row-link" href="#">Row B</a></li>
+        <li class="row"><a class="row-link" href="#">Row C</a></li>
+      </ul>
+    </div>
+  </body>
+</html>

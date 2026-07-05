@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Responsive</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="hero">
+      <!-- DEFECT: below 640px the nav is absolutely positioned and overlaps this title -->
+      <nav class="app-nav">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/settings/billing">Billing</a>
+        <a href="/settings/profile">Profile</a>
+        <a href="/responsive">Responsive</a>
+      </nav>
+      <h1>Responsive layout</h1>
+    </div>
+    <p class="muted">Resize below 640px to see the nav overlap the title.</p>
+  </body>
+</html>
