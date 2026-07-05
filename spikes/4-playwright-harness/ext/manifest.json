@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "UXCue Harness Spike",
+  "version": "0.0.1",
+  "description": "Minimal MV3 extension to prove the Playwright harness (D007, UXL-QA-001).",
+  "background": { "service_worker": "sw.js" },
+  "action": { "default_title": "UXCue" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "permissions": ["sidePanel", "storage"]
+}
