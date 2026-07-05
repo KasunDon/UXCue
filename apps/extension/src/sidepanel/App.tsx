@@ -118,6 +118,8 @@ export function App() {
     }
   }
 
+  const armCapture = () => void platform.runtime.send({ type: "ARM_CAPTURE" });
+
   return (
     <div style={S.root}>
       <header data-testid="uxcue-header" style={S.header}>
@@ -184,6 +186,20 @@ export function App() {
           </button>
         </Row>
       </div>
+
+      {session && (
+        <div style={S.toolbar}>
+          <button
+            data-testid="capture-btn"
+            onClick={armCapture}
+            style={S.captureBtn}
+            title="Click, then click any element on the page"
+          >
+            ◎ Capture element
+          </button>
+          <span style={S.toolbarHint}>or right-click a page → UXCue</span>
+        </div>
+      )}
 
       {session && (
         <div style={S.filters}>
@@ -366,6 +382,25 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       gap: 8,
       borderBottom: `1px solid ${t.color.border}`,
     },
+    toolbar: {
+      padding: "10px 12px",
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      borderBottom: `1px solid ${t.color.border}`,
+    },
+    captureBtn: {
+      font: "inherit",
+      fontSize: 14,
+      fontWeight: 650,
+      padding: "8px 14px",
+      borderRadius: t.radius,
+      border: "none",
+      background: t.color.primary,
+      color: "#fff",
+      cursor: "pointer",
+    },
+    toolbarHint: { fontSize: 12, color: t.color.textMuted },
     filters: {
       padding: "8px 12px",
       display: "flex",

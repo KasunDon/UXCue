@@ -2,6 +2,18 @@
 // forbids chrome.* elsewhere excludes src/platform/**.
 import type { PlatformAdapter, RuntimeMessage, RuntimeResponse } from "./index";
 
+/** Inject the declared content scripts (isolated + MAIN world) into one tab. */
+async function injectDeclared(tabId: number): Promise<void> {
+  const scripts = chrome.runtime.getManifest().content_scripts ?? [];
+  for (const cs of scripts) {
+    if (!cs.js?.length) continue;
+    const world = (cs as { world?: "MAIN" | "ISOLATED" }).world === "MAIN" ? "MAIN" : "ISOLATED";
+    await chrome.scripting
+      .executeScript({ target: { tabId }, files: cs.js, world })
+      .catch(() => {});
+  }
+}
+
 /**
  * Concrete Chrome (MV3) implementation of the platform adapter. This is the one
  * place in the extension that is allowed to reference `chrome.*` (D015).
@@ -26,6 +38,10 @@ const chromeAdapter: PlatformAdapter = {
         sendResponse(result ?? { ok: true });
         return false;
       });
+    },
+    onLifecycle(handler) {
+      chrome.runtime.onInstalled.addListener(() => handler());
+      chrome.runtime.onStartup.addListener(() => handler());
     },
     id() {
       return chrome.runtime.id;
@@ -71,27 +87,27 @@ const chromeAdapter: PlatformAdapter = {
     async sendMessage(tabId, message) {
       await chrome.tabs.sendMessage(tabId, message);
     },
-    async injectContentScripts(tabId) {
-      const scripts = chrome.runtime.getManifest().content_scripts ?? [];
-      for (const cs of scripts) {
-        if (!cs.js?.length) continue;
-        const world =
-          (cs as { world?: "MAIN" | "ISOLATED" }).world === "MAIN" ? "MAIN" : "ISOLATED";
-        await chrome.scripting
-          .executeScript({ target: { tabId }, files: cs.js, world })
-          .catch(() => {});
-      }
+    injectContentScripts(tabId) {
+      return injectDeclared(tabId);
+    },
+    async injectContentScriptsEverywhere() {
+      const tabs = await chrome.tabs.query({ url: ["http://*/*", "https://*/*"] });
+      for (const tab of tabs) if (tab.id != null) await injectDeclared(tab.id);
+    },
+    async activeTabId() {
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      return tab?.id ?? null;
     },
   },
 
   activeTab: {
     async injectScript(files: string[]) {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
       if (tab?.id == null) return;
       await chrome.scripting.executeScript({ target: { tabId: tab.id }, files });
     },
     async injectFunction(fn: () => void) {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
       if (tab?.id == null) return;
       await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: fn });
     },

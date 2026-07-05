@@ -21,6 +21,8 @@ export type RuntimeMessage =
   | { type: "PING" }
   | { type: "CONTENT_READY"; url: string }
   | { type: "ARM_CAPTURE" }
+  // side panel / composer -> SW: capture the active tab and merge into the draft
+  | { type: "TRIGGER_ACTIVE"; action: "viewport" | "area" | "console" }
   | { type: "CAPTURE_CANCELLED" }
   // SW -> content triggers (from the right-click menu)
   | { type: "CAPTURE_CONTEXT" }
@@ -60,6 +62,8 @@ export interface PlatformAdapter {
         sender: { url?: string; tabId?: number },
       ) => Promise<RuntimeResponse> | RuntimeResponse | void,
     ): void;
+    /** Fires on install/update and on browser startup. */
+    onLifecycle(handler: () => void): void;
     id(): string;
   };
 
@@ -85,6 +89,10 @@ export interface PlatformAdapter {
     sendMessage(tabId: number, message: RuntimeMessage): Promise<void>;
     /** (Re)inject the declared content scripts into an already-open tab. */
     injectContentScripts(tabId: number): Promise<void>;
+    /** Inject the declared content scripts into every already-open http/https tab. */
+    injectContentScriptsEverywhere(): Promise<void>;
+    /** The id of the active tab in the last-focused window (or null). */
+    activeTabId(): Promise<number | null>;
   };
 
   /** Run code in the ACTIVE tab under activeTab (no host perms, D013). */

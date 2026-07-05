@@ -88,7 +88,11 @@ export function overlayMain(): void {
 
   function descriptor(el: Element): string {
     const tag = el.tagName.toLowerCase();
+    const tid = el.getAttribute("data-testid") || el.getAttribute("data-test");
+    if (tid) return `${tag}[${tid}]`;
     if (el.id) return `${tag}#${el.id}`;
+    const named = el.getAttribute("name") || el.getAttribute("aria-label");
+    if (named) return `${tag}[${named}]`;
     const cls = Array.from(el.classList)[0];
     return cls ? `${tag}.${cls}` : tag;
   }

@@ -21,6 +21,12 @@ let pings = 0;
 
 platform.sidePanel.openOnActionClick(true).catch(() => {});
 
+// On install/update/startup, inject the capture scripts into already-open tabs
+// so right-click works without the user reloading each page.
+platform.runtime.onLifecycle(() => {
+  platform.tabs.injectContentScriptsEverywhere().catch(() => {});
+});
+
 platform.commands.onCommand((command) => {
   if (command === "arm-capture") {
     platform.activeTab.injectFunction(overlayMain).catch((e) => console.error("[uxcue] arm", e));
@@ -38,9 +44,9 @@ const MENU: Record<string, RuntimeMessage["type"]> = {
 platform.contextMenus.register([
   { id: "uxcue", title: "UXCue" },
   { id: "uxcue-feedback", title: "Give feedback on this element", parentId: "uxcue" },
-  { id: "uxcue-screenshot", title: "Add screenshot", parentId: "uxcue" },
-  { id: "uxcue-area", title: "Add area screenshot", parentId: "uxcue" },
-  { id: "uxcue-console", title: "Add console logs", parentId: "uxcue" },
+  { id: "uxcue-screenshot", title: "Screenshot the visible page", parentId: "uxcue" },
+  { id: "uxcue-area", title: "Screenshot a selected area", parentId: "uxcue" },
+  { id: "uxcue-console", title: "Attach recent console logs", parentId: "uxcue" },
 ]);
 
 platform.contextMenus.onClicked(async (menuItemId, tabId) => {
@@ -75,6 +81,9 @@ platform.runtime.onMessage((message) => {
     case "ARM_CAPTURE":
       void platform.activeTab.injectFunction(overlayMain);
       return { ok: true };
+    case "TRIGGER_ACTIVE":
+      void triggerActive(m.action);
+      return { ok: true };
     case "CAPTURE_SELECTED":
       void onCapture({
         element: m.element,
@@ -97,6 +106,23 @@ platform.runtime.onMessage((message) => {
       return { ok: true };
   }
 });
+
+/** Composer "add" buttons: capture the active tab and merge into the draft. */
+async function triggerActive(action: "viewport" | "area" | "console"): Promise<void> {
+  const tabId = await platform.tabs.activeTabId();
+  if (tabId == null) return;
+  const trigger = {
+    viewport: "CAPTURE_VIEWPORT",
+    area: "CAPTURE_AREA",
+    console: "CAPTURE_CONSOLE",
+  }[action] as RuntimeMessage["type"];
+  try {
+    await platform.tabs.sendMessage(tabId, { type: trigger } as RuntimeMessage);
+  } catch {
+    await platform.tabs.injectContentScripts(tabId);
+    await platform.tabs.sendMessage(tabId, { type: trigger } as RuntimeMessage).catch(() => {});
+  }
+}
 
 interface CaptureInput {
   element?: ElementContext;
