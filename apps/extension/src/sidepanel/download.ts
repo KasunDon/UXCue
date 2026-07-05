@@ -1,6 +1,7 @@
 import type { Project, Session } from "@uxcue/schema";
 import type { Repository } from "../storage/repository";
 import { buildBundleZip, type ScreenshotAsset } from "../export/bundle";
+import { validateReview, type ExportWarnings } from "../export/validate";
 
 async function blobToBytes(blob: Blob): Promise<Uint8Array> {
   return new Uint8Array(await blob.arrayBuffer());
@@ -11,8 +12,9 @@ export async function exportSession(
   repo: Repository,
   project: Project,
   session: Session,
-): Promise<{ issueCount: number; bytes: number }> {
+): Promise<{ issueCount: number; bytes: number; warnings: ExportWarnings }> {
   const issues = await repo.listIssues(session.id);
+  const warnings = await validateReview(repo, issues);
 
   const screenshots: ScreenshotAsset[] = [];
   for (const issue of issues) {
@@ -35,5 +37,5 @@ export async function exportSession(
   a.remove();
   URL.revokeObjectURL(url);
 
-  return { issueCount: issues.length, bytes: zip.byteLength };
+  return { issueCount: issues.length, bytes: zip.byteLength, warnings };
 }

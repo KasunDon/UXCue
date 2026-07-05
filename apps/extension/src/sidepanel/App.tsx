@@ -13,6 +13,7 @@ import { DRAFT_KEY, type CaptureDraft } from "../capture/draft";
 import { repo } from "./repo";
 import { exportSession } from "./download";
 import { Composer } from "./Composer";
+import { IssueDetail } from "./IssueDetail";
 
 const platform = getPlatform();
 
@@ -38,9 +39,11 @@ export function App() {
   const [query, setQuery] = useState("");
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState<CaptureDraft | null>(null);
+  const [selectedId, setSelectedId] = useState<string>();
 
   const project = projects.find((p) => p.id === projectId);
   const session = sessions.find((s) => s.id === sessionId);
+  const selected = issues.find((i) => i.id === selectedId);
 
   // Watch chrome.storage for a capture draft written by the service worker.
   useEffect(() => {
@@ -100,7 +103,15 @@ export function App() {
     if (!project || !session) return;
     setBusy(true);
     try {
-      await exportSession(repo, project, session);
+      const { warnings } = await exportSession(repo, project, session);
+      const notes: string[] = [];
+      if (warnings.missingScreenshots.length) {
+        notes.push(`${warnings.missingScreenshots.length} missing screenshot(s)`);
+      }
+      if (warnings.staleSelectors.length) {
+        notes.push(`${warnings.staleSelectors.length} non-unique selector(s)`);
+      }
+      if (notes.length) alert(`Review exported with warnings: ${notes.join(", ")}.`);
     } finally {
       setBusy(false);
     }
@@ -207,7 +218,12 @@ export function App() {
           />
         )}
         {filtered.map((issue) => (
-          <article key={issue.id} data-testid="issue-card" style={S.card}>
+          <article
+            key={issue.id}
+            data-testid="issue-card"
+            onClick={() => setSelectedId(issue.id)}
+            style={{ ...S.card, cursor: "pointer" }}
+          >
             <div style={S.cardTop}>
               <strong style={S.id}>{issue.displayId}</strong>
               <span style={{ ...S.pill, color: SEVERITY_COLOR[issue.severity] }}>
@@ -252,6 +268,20 @@ export function App() {
           }}
           onDiscard={clearDraft}
         />
+      )}
+
+      {selected && (
+        <div style={S.detailOverlay}>
+          <IssueDetail
+            issue={selected}
+            onBack={() => setSelectedId(undefined)}
+            onChanged={refreshIssues}
+            onDeleted={() => {
+              setSelectedId(undefined);
+              refreshIssues();
+            }}
+          />
+        </div>
       )}
     </div>
   );
@@ -362,6 +392,14 @@ const S: Record<string, CSSProperties> = {
     color: "#fff",
     fontSize: 13,
     textAlign: "center",
+  },
+  detailOverlay: {
+    position: "fixed",
+    inset: 0,
+    background: tokens.color.bg,
+    zIndex: 20,
+    display: "flex",
+    flexDirection: "column",
   },
   primary: {
     width: "100%",

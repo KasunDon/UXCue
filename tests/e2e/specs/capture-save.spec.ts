@@ -64,4 +64,20 @@ test("a capture draft opens the composer and saves a tracked issue", async ({
 
   // export is now enabled
   await expect(page.getByTestId("export")).toBeEnabled();
+
+  // detail: edit + persist (UXL-ISSUE-001)
+  await card.click();
+  await expect(page.getByTestId("issue-detail")).toBeVisible();
+  await page.getByTestId("detail-title").fill("Renamed issue");
+  await page.getByTestId("detail-status").selectOption("ready-for-agent");
+  await page.getByTestId("detail-save").click();
+  await page.getByTestId("detail-back").click();
+  await expect(page.getByTestId("issue-card").first()).toContainText("Renamed issue");
+  await expect(page.getByTestId("issue-card").first()).toContainText("ready-for-agent");
+
+  // detail: delete (confirm() accepted by the dialog handler)
+  await page.getByTestId("issue-card").first().click();
+  await page.getByTestId("detail-delete").click();
+  await expect(page.getByTestId("issue-detail")).toHaveCount(0);
+  await expect(page.locator("body")).toContainText("No issues captured");
 });
