@@ -21,6 +21,12 @@ export interface MockPlatform extends PlatformAdapter {
   sendMessageRejects: boolean;
   /** When set, capture.captureViewport rejects (simulates missing activeTab). */
   captureRejects: boolean;
+  /** Origin returned by permissions.activeTabOrigin(). */
+  activeOrigin: string | null;
+  /** Origins the user has granted host access to. */
+  readonly grantedOrigins: Set<string>;
+  /** Whether requestHostAccess() grants (simulates the user approving). */
+  grantAccess: boolean;
   /** Deliver a message to the registered onMessage handler and return its response. */
   emit(
     message: RuntimeMessage,
@@ -55,6 +61,9 @@ export function createMockPlatform(overrides?: Partial<MockPlatform>): MockPlatf
     activeTab_id: 1,
     sendMessageRejects: false,
     captureRejects: false,
+    activeOrigin: "https://x.test",
+    grantedOrigins: new Set<string>(),
+    grantAccess: true,
     store,
 
     runtime: {
@@ -108,6 +117,19 @@ export function createMockPlatform(overrides?: Partial<MockPlatform>): MockPlatf
         if (p.captureRejects) throw new Error("activeTab not in effect");
         p.captureCount += 1;
         return new Blob([new Uint8Array([137, 80, 78, 71])], { type: "image/png" });
+      },
+    },
+    permissions: {
+      async activeTabOrigin() {
+        return p.activeOrigin;
+      },
+      async hasHostAccess(origin) {
+        return p.grantedOrigins.has(origin);
+      },
+      async requestHostAccess(origin) {
+        if (!p.grantAccess) return false;
+        p.grantedOrigins.add(origin);
+        return true;
       },
     },
     storage: {

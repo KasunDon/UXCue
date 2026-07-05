@@ -17,6 +17,7 @@ import { Composer } from "./Composer";
 import { IssueDetail } from "./IssueDetail";
 import { GitHubPanel } from "./GitHubPanel";
 import { useTheme } from "./theme";
+import { useHostAccess } from "./useHostAccess";
 
 const platform = getPlatform();
 
@@ -35,6 +36,7 @@ export function App() {
   const { t, mode, toggle } = useTheme();
   const S = makeStyles(t);
   const sev = severityColor(t);
+  const { ensureAccess } = useHostAccess();
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -135,7 +137,12 @@ export function App() {
     }
   }
 
-  const armCapture = () => void platform.runtime.send({ type: "ARM_CAPTURE" });
+  const armCapture = async () => {
+    // Request per-site access first (gesture-preserving) so the element's
+    // screenshot can be captured; arming itself works either way.
+    await ensureAccess();
+    void platform.runtime.send({ type: "ARM_CAPTURE" });
+  };
 
   return (
     <div className="uxcue-panel" style={S.root}>
@@ -244,7 +251,7 @@ export function App() {
         <div style={S.toolbar}>
           <button
             data-testid="capture-btn"
-            onClick={armCapture}
+            onClick={() => void armCapture()}
             style={S.captureBtn}
             title="Inspect &amp; capture — then click any element on the page (Alt+Shift+U)"
             aria-label="Inspect and capture an element"

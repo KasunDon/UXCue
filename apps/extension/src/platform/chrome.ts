@@ -121,6 +121,25 @@ const chromeAdapter: PlatformAdapter = {
     },
   },
 
+  permissions: {
+    async activeTabOrigin(): Promise<string | null> {
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      if (!tab?.url) return null;
+      try {
+        const { protocol, origin } = new URL(tab.url);
+        return protocol === "http:" || protocol === "https:" ? origin : null;
+      } catch {
+        return null;
+      }
+    },
+    hasHostAccess(origin: string): Promise<boolean> {
+      return chrome.permissions.contains({ origins: [`${origin}/*`] });
+    },
+    requestHostAccess(origin: string): Promise<boolean> {
+      return chrome.permissions.request({ origins: [`${origin}/*`] });
+    },
+  },
+
   storage: {
     async get<T>(key: string): Promise<T | undefined> {
       const out = await chrome.storage.local.get(key);

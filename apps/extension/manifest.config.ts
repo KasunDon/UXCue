@@ -24,10 +24,17 @@ export default defineManifest({
     "sidePanel",
     "storage",
     "downloads",
+    // Read the active tab's URL so we can request per-site capture access for it.
+    "tabs",
   ],
-  // Needed for GitHub API calls from the extension (#9). raw.githubusercontent
-  // is where committed screenshots resolve for the issue body.
+  // Static host grants stay minimal: GitHub API + where committed screenshots
+  // resolve (#9). NO static all-sites grant.
   host_permissions: ["https://api.github.com/*", "https://raw.githubusercontent.com/*"],
+  // Per-site opt-in: captureVisibleTab needs host access for the reviewed page,
+  // which a side-panel click can't grant via activeTab. We request the *current*
+  // origin at runtime from the user gesture, so the user approves each site
+  // (never a static all-sites grant). Anticipated by D013's per-site follow-up.
+  optional_host_permissions: ["http://*/*", "https://*/*"],
   content_scripts: [
     {
       matches: ["http://*/*", "https://*/*"],

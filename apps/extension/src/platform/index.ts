@@ -110,6 +110,20 @@ export interface PlatformAdapter {
     captureViewport(): Promise<Blob>;
   };
 
+  /**
+   * Per-site host access for screenshots (captureVisibleTab needs it, and a
+   * side-panel click can't grant activeTab). requestHostAccess MUST be called
+   * from a user gesture (a click handler) with no awaits before it.
+   */
+  permissions: {
+    /** Origin of the active tab (needs the "tabs" permission), or null. */
+    activeTabOrigin(): Promise<string | null>;
+    /** Whether the extension already holds host access for this origin. */
+    hasHostAccess(origin: string): Promise<boolean>;
+    /** Prompt for host access to this origin (no-op prompt if already granted). */
+    requestHostAccess(origin: string): Promise<boolean>;
+  };
+
   storage: {
     get<T>(key: string): Promise<T | undefined>;
     set(key: string, value: unknown): Promise<void>;

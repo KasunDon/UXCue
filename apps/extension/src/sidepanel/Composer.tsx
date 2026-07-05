@@ -5,6 +5,7 @@ import { getPlatform } from "../platform/index";
 import { repo } from "./repo";
 import { createIssueFromDraft, type CaptureDraft, type ComposerForm } from "../capture/draft";
 import { useTokens } from "./theme";
+import { useHostAccess } from "./useHostAccess";
 
 const platform = getPlatform();
 
@@ -47,6 +48,7 @@ export function Composer({
     assigneeHint: "unassigned",
   });
   const [saving, setSaving] = useState(false);
+  const { ensureAccess } = useHostAccess();
   const t = useTokens();
   const S = makeStyles(t);
   const set = <K extends keyof ComposerForm>(k: K, v: ComposerForm[K]) =>
@@ -114,6 +116,9 @@ export function Composer({
   const add = async (action: "viewport" | "area" | "console") => {
     setHint(undefined);
     setPending(action);
+    // Screenshots need per-site host access; request it first (gesture-safe).
+    // Console needs none, so don't prompt for it.
+    if (action !== "console") await ensureAccess();
     const res = (await platform.runtime.send({ type: "TRIGGER_ACTIVE", action })) as {
       sent?: boolean;
     };
