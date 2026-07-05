@@ -14,6 +14,7 @@ import {
   extractCaptureContext,
 } from "../capture/metadata";
 import { pickArea } from "./area-overlay";
+import { overlayMain } from "./overlay";
 
 const MAX_LOGS = 50;
 const recentLogs: ConsoleEntry[] = [];
@@ -51,6 +52,12 @@ if (!w.__uxcueCaptureInit) {
 
 async function handle(type: string | undefined): Promise<void> {
   try {
+    // Arm the element picker in-page (no activeTab needed; we're already here).
+    if (type === "SHOW_OVERLAY") {
+      overlayMain();
+      return;
+    }
+
     const page = extractPageContext(window);
     const capture = extractCaptureContext(window);
 

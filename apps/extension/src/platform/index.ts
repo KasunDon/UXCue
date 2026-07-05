@@ -21,6 +21,9 @@ export type RuntimeMessage =
   | { type: "PING" }
   | { type: "CONTENT_READY"; url: string }
   | { type: "ARM_CAPTURE" }
+  // SW -> content: show the element-picker overlay (no activeTab needed; the
+  // declared content script is already present on the page).
+  | { type: "SHOW_OVERLAY" }
   // side panel / composer -> SW: capture the active tab and merge into the draft
   | { type: "TRIGGER_ACTIVE"; action: "viewport" | "area" | "console" }
   | { type: "CAPTURE_CANCELLED" }

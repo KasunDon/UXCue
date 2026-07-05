@@ -58,6 +58,7 @@ export function Composer({
   const [thumbs, setThumbs] = useState<{ element?: string; viewport?: string }>({});
   const [flash, setFlash] = useState<null | "shot" | "console">(null);
   const [pending, setPending] = useState<null | "viewport" | "area" | "console">(null);
+  const [hint, setHint] = useState<string>();
 
   // Load thumbnails for whatever the draft currently holds (live-updates as
   // the service worker merges new captures into the draft in storage).
@@ -92,9 +93,34 @@ export function Composer({
     return () => clearTimeout(id);
   }, [elKey, vpKey, consoleCount]);
 
-  const add = (action: "viewport" | "area" | "console") => {
+  // Watchdog: never leave a button stuck on "Capturing…". If no new attachment
+  // lands shortly after a trigger, stop the spinner and explain what to try.
+  useEffect(() => {
+    if (!pending) return;
+    const id = setTimeout(() => {
+      setPending((p) => {
+        if (p)
+          setHint(
+            p === "console"
+              ? "No recent console output was found on this page."
+              : "Couldn't capture this page from the panel. Press Alt+Shift+U on the page (grants access), then retry.",
+          );
+        return null;
+      });
+    }, 4000);
+    return () => clearTimeout(id);
+  }, [pending]);
+
+  const add = async (action: "viewport" | "area" | "console") => {
+    setHint(undefined);
     setPending(action);
-    void platform.runtime.send({ type: "TRIGGER_ACTIVE", action });
+    const res = (await platform.runtime.send({ type: "TRIGGER_ACTIVE", action })) as {
+      sent?: boolean;
+    };
+    if (res?.sent === false) {
+      setPending(null);
+      setHint("Couldn't reach this page. Reload it, or use the Alt+Shift+U shortcut.");
+    }
   };
 
   const hasAny = !!elKey || !!vpKey || consoleCount > 0;
@@ -251,6 +277,11 @@ export function Composer({
             {pending === "console" ? "⌘ Grabbing…" : "⌘ Console"}
           </button>
         </div>
+        {hint && (
+          <p data-testid="composer-hint" style={S.hint}>
+            {hint}
+          </p>
+        )}
 
         <div style={S.actions}>
           <button
@@ -416,6 +447,12 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       background: t.color.surface,
       color: t.color.text,
       cursor: "pointer",
+    },
+    hint: {
+      margin: "8px 0 0",
+      fontSize: 12,
+      color: t.color.attention,
+      lineHeight: 1.5,
     },
     actions: { marginTop: 16 },
     save: {
