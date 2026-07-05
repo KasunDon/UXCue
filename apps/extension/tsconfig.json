@@ -1,10 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
     "noEmit": true,
-    "types": []
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["chrome"],
+    "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "manifest.config.ts", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

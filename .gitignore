@@ -4,6 +4,11 @@ dist/
 coverage/
 *.tsbuildinfo
 
+# Playwright artifacts
+tests/e2e/test-results/
+tests/e2e/playwright-report/
+.last-run.json
+
 # Env & secrets (never commit)
 .env
 .env.*

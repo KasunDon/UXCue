@@ -1,19 +1,52 @@
 /**
- * Platform adapter (D015) — the ONLY module allowed to touch `chrome.*` APIs.
- *
- * Feature code depends on this interface, never on `chrome.*` directly, so the
- * extension can be ported (Release 6: Edge -> Firefox -> Safari) and mocked in
- * the Playwright e2e suite behind a single seam. A lint rule
- * (`no-restricted-globals` for `chrome`) enforces this from `UXL-EXT-001`.
- *
- * The concrete Chrome implementation and the capture/storage/sidePanel/commands/
- * downloads facades are added in `UXL-EXT-001`. This file seeds the seam from
- * the first line of extension code, as D015 requires.
+ * Platform adapter (D015) — the ONLY module tree allowed to touch `chrome.*`.
+ * Everything else imports this interface. A lint rule forbids `chrome.*`
+ * elsewhere under apps/extension/src, so the extension stays portable
+ * (Release 6) and mockable in e2e.
  */
 
 export type PlatformName = "chrome" | "edge" | "firefox" | "mock";
 
+/** Messages the side panel / content script send to the service worker. */
+export type RuntimeMessage =
+  { type: "PING" } | { type: "CONTENT_READY"; url: string } | { type: "ARM_CAPTURE" };
+
+export type RuntimeResponse = { ok: true; [k: string]: unknown };
+
 export interface PlatformAdapter {
   readonly platform: PlatformName;
-  // capture, storage, sidePanel, commands, downloads facades land in UXL-EXT-001.
+
+  runtime: {
+    /** Send a message to the service worker and await its response. */
+    send(message: RuntimeMessage): Promise<RuntimeResponse>;
+    /** Register a handler; its (possibly async) return value is the response. */
+    onMessage(
+      handler: (
+        message: RuntimeMessage,
+        sender: { url?: string; tabId?: number },
+      ) => Promise<RuntimeResponse> | RuntimeResponse | void,
+    ): void;
+    id(): string;
+  };
+
+  sidePanel: {
+    /** Open the side panel when the toolbar action is clicked. */
+    openOnActionClick(open: boolean): Promise<void>;
+  };
+
+  commands: {
+    onCommand(handler: (command: string) => void): void;
+  };
+
+  /** Inject a content script into the ACTIVE tab under activeTab (no host perms). */
+  activeTab: {
+    injectScript(files: string[]): Promise<void>;
+  };
+
+  storage: {
+    get<T>(key: string): Promise<T | undefined>;
+    set(key: string, value: unknown): Promise<void>;
+  };
 }
+
+export { getPlatform } from "./chrome";

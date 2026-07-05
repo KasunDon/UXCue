@@ -1,0 +1,68 @@
+// This file is the sanctioned chrome.* boundary (D015); the lint rule that
+// forbids chrome.* elsewhere excludes src/platform/**.
+import type { PlatformAdapter, RuntimeMessage, RuntimeResponse } from "./index";
+
+/**
+ * Concrete Chrome (MV3) implementation of the platform adapter. This is the one
+ * place in the extension that is allowed to reference `chrome.*` (D015).
+ */
+const chromeAdapter: PlatformAdapter = {
+  platform: "chrome",
+
+  runtime: {
+    send(message: RuntimeMessage): Promise<RuntimeResponse> {
+      return chrome.runtime.sendMessage(message);
+    },
+    onMessage(handler) {
+      chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        const result = handler(message as RuntimeMessage, {
+          url: sender.url,
+          tabId: sender.tab?.id,
+        });
+        if (result instanceof Promise) {
+          result.then((r) => sendResponse(r ?? { ok: true }));
+          return true; // async response
+        }
+        sendResponse(result ?? { ok: true });
+        return false;
+      });
+    },
+    id() {
+      return chrome.runtime.id;
+    },
+  },
+
+  sidePanel: {
+    async openOnActionClick(open: boolean) {
+      await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: open });
+    },
+  },
+
+  commands: {
+    onCommand(handler) {
+      chrome.commands.onCommand.addListener(handler);
+    },
+  },
+
+  activeTab: {
+    async injectScript(files: string[]) {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id == null) return;
+      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files });
+    },
+  },
+
+  storage: {
+    async get<T>(key: string): Promise<T | undefined> {
+      const out = await chrome.storage.local.get(key);
+      return out[key] as T | undefined;
+    },
+    async set(key: string, value: unknown) {
+      await chrome.storage.local.set({ [key]: value });
+    },
+  },
+};
+
+export function getPlatform(): PlatformAdapter {
+  return chromeAdapter;
+}

@@ -1,20 +1,30 @@
 {
   "name": "@uxcue/extension",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "description": "UXCue MV3 Chrome extension (service worker, content script, side panel).",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run --passWithNoTests",
-    "package": "echo 'package:extension is wired in UXL-EXT-001 (Vite + CRXJS build + zip)' && exit 0"
+    "package": "vite build"
   },
   "dependencies": {
     "@uxcue/schema": "workspace:*",
-    "@uxcue/ui": "workspace:*"
+    "@uxcue/ui": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "2.0.0-beta.28",
+    "@types/chrome": "^0.0.287",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.7.3",
+    "vite": "^5.4.11",
     "vitest": "^2.1.8"
   }
 }
