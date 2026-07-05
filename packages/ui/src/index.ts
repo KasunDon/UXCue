@@ -24,11 +24,46 @@ export interface Tokens {
   radius: string;
   fontUi: string;
   fontMono: string;
+  /** docs/18 productive type scale (extension): fontSize/lineHeight/weight. */
+  type: {
+    displaySm: TypeStyle;
+    titleLg: TypeStyle;
+    titleMd: TypeStyle;
+    bodyMd: TypeStyle;
+    bodySm: TypeStyle;
+    labelMd: TypeStyle;
+    metaSm: TypeStyle;
+    monoSm: TypeStyle;
+  };
+  /** docs/18 spacing scale (px). */
+  space: { xs: number; sm: number; md: number; lg: number; xl: number };
+  /** docs/18 motion: 120ms hover, 160ms panel/detail. */
+  motion: { hover: string; panel: string };
+}
+
+export interface TypeStyle {
+  fontSize: number;
+  lineHeight: string;
+  fontWeight: number;
 }
 
 const fontUi =
   'Inter, "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
 const fontMono = '"IBM Plex Mono", "JetBrains Mono", "SFMono-Regular", Consolas, monospace';
+
+// Type / spacing / motion are theme-independent (docs/18); shared by both palettes.
+const type: Tokens["type"] = {
+  displaySm: { fontSize: 20, lineHeight: "28px", fontWeight: 700 },
+  titleLg: { fontSize: 18, lineHeight: "26px", fontWeight: 700 },
+  titleMd: { fontSize: 16, lineHeight: "24px", fontWeight: 650 },
+  bodyMd: { fontSize: 14, lineHeight: "21px", fontWeight: 450 },
+  bodySm: { fontSize: 13, lineHeight: "19px", fontWeight: 450 },
+  labelMd: { fontSize: 13, lineHeight: "18px", fontWeight: 650 },
+  metaSm: { fontSize: 12, lineHeight: "17px", fontWeight: 500 },
+  monoSm: { fontSize: 12, lineHeight: "17px", fontWeight: 500 },
+};
+const space: Tokens["space"] = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24 };
+const motion: Tokens["motion"] = { hover: "120ms", panel: "160ms" };
 
 export const lightTokens: Tokens = {
   color: {
@@ -51,6 +86,9 @@ export const lightTokens: Tokens = {
   radius: "8px",
   fontUi,
   fontMono,
+  type,
+  space,
+  motion,
 };
 
 /** Near-black dark theme (docs/18: no purple/slate soup, high contrast, teal accent). */
@@ -75,6 +113,9 @@ export const darkTokens: Tokens = {
   radius: "8px",
   fontUi,
   fontMono,
+  type,
+  space,
+  motion,
 };
 
 /** Back-compat default (light). Prefer the theme context in the side panel. */

@@ -138,7 +138,17 @@ export function App() {
   const armCapture = () => void platform.runtime.send({ type: "ARM_CAPTURE" });
 
   return (
-    <div style={S.root}>
+    <div className="uxcue-panel" style={S.root}>
+      {/* Global focus ring (keyboard a11y) + motion — pseudo-classes can't be inline. */}
+      <style>{`
+        .uxcue-panel :focus-visible { outline: 2px solid ${t.color.focus}; outline-offset: 2px; border-radius: ${t.radius}; }
+        .uxcue-panel button, .uxcue-panel a, .uxcue-panel select, .uxcue-panel input, .uxcue-panel textarea {
+          transition: background-color ${t.motion.hover} ease, border-color ${t.motion.hover} ease, box-shadow ${t.motion.hover} ease, color ${t.motion.hover} ease;
+        }
+        .uxcue-panel [data-testid="issue-card"] { transition: border-color ${t.motion.hover} ease, box-shadow ${t.motion.hover} ease; }
+        .uxcue-panel [data-testid="issue-card"]:hover { border-color: ${t.color.primary}; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+        @media (prefers-reduced-motion: reduce) { .uxcue-panel * { transition: none !important; } }
+      `}</style>
       <header data-testid="uxcue-header" style={S.header}>
         <span>UXCue</span>
         <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -148,7 +158,8 @@ export function App() {
           <button
             data-testid="github-btn"
             onClick={() => setShowGitHub(true)}
-            title="GitHub integration"
+            title="GitHub integration — connect a repo &amp; publish issues"
+            aria-label="GitHub integration"
             style={S.themeToggle}
           >
             ⎇
@@ -156,13 +167,22 @@ export function App() {
           <button
             data-testid="theme-toggle"
             onClick={toggle}
-            title={mode === "dark" ? "Switch to light" : "Switch to dark"}
+            title={mode === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            aria-label={mode === "dark" ? "Switch to light theme" : "Switch to dark theme"}
             style={S.themeToggle}
           >
             {mode === "dark" ? "☀" : "☾"}
           </button>
         </span>
       </header>
+
+      {projects.length === 0 && (
+        <div style={S.onboard} data-testid="onboarding">
+          👋 <b>New here?</b> Create a project, start a session, then <b>Capture element</b> (or
+          right-click a page → UXCue). Shortcut: <kbd style={S.kbd}>Alt</kbd>+
+          <kbd style={S.kbd}>Shift</kbd>+<kbd style={S.kbd}>U</kbd>.
+        </div>
+      )}
 
       <div style={S.pickers}>
         <Row>
@@ -182,7 +202,13 @@ export function App() {
               </option>
             ))}
           </select>
-          <button data-testid="new-project" onClick={createProject} style={S.iconBtn}>
+          <button
+            data-testid="new-project"
+            onClick={createProject}
+            title="New project"
+            aria-label="New project"
+            style={S.iconBtn}
+          >
             +
           </button>
         </Row>
@@ -205,6 +231,8 @@ export function App() {
             data-testid="new-session"
             onClick={createSession}
             disabled={!projectId}
+            title="New review session"
+            aria-label="New review session"
             style={S.iconBtn}
           >
             +
@@ -429,8 +457,8 @@ function Empty({
         background: t.color.surface,
       }}
     >
-      <p style={{ fontWeight: 650, margin: "0 0 4px" }}>{title}</p>
-      <p style={{ color: t.color.textMuted, margin: 0, fontSize: 13 }}>{hint}</p>
+      <p style={{ ...t.type.titleMd, margin: "0 0 4px" }}>{title}</p>
+      <p style={{ ...t.type.bodySm, color: t.color.textMuted, margin: 0 }}>{hint}</p>
     </div>
   );
 }
@@ -455,15 +483,36 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       justifyContent: "space-between",
       alignItems: "center",
     },
-    count: { fontSize: 12, fontWeight: 500, opacity: 0.8 },
+    count: { ...t.type.metaSm, opacity: 0.85 },
     themeToggle: {
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      width: 28,
+      height: 28,
       border: "none",
+      borderRadius: t.radius,
       background: "transparent",
       color: t.color.headerText,
       cursor: "pointer",
       fontSize: 15,
       lineHeight: 1,
-      padding: 2,
+    },
+    onboard: {
+      ...t.type.bodySm,
+      padding: "10px 12px",
+      background: t.color.surfaceMuted,
+      color: t.color.text,
+      borderBottom: `1px solid ${t.color.border}`,
+      lineHeight: 1.5,
+    },
+    kbd: {
+      fontFamily: t.fontMono,
+      fontSize: 11,
+      padding: "1px 5px",
+      borderRadius: 4,
+      border: `1px solid ${t.color.border}`,
+      background: t.color.surface,
     },
     pickers: {
       padding: 12,
@@ -482,10 +531,12 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
     captureBtn: {
       display: "inline-flex",
       alignItems: "center",
+      justifyContent: "center",
       gap: 7,
       font: "inherit",
       fontSize: 14,
       fontWeight: 650,
+      minHeight: 36,
       padding: "8px 14px",
       borderRadius: t.radius,
       border: "none",
@@ -493,7 +544,7 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       color: "#fff",
       cursor: "pointer",
     },
-    toolbarHint: { fontSize: 12, color: t.color.textMuted },
+    toolbarHint: { ...t.type.metaSm, color: t.color.textMuted },
     filters: {
       padding: "8px 12px",
       display: "flex",
@@ -522,8 +573,13 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
     },
     iconBtn: {
       width: 32,
+      height: 32,
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
       font: "inherit",
-      fontSize: 16,
+      fontSize: 18,
+      lineHeight: 1,
       borderRadius: t.radius,
       border: `1px solid ${t.color.border}`,
       background: t.color.surface,
@@ -545,11 +601,11 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       background: t.color.surface,
     },
     cardTop: { display: "flex", gap: 8, alignItems: "center", fontSize: 12 },
-    id: { fontFamily: t.fontMono, fontSize: 13 },
-    pill: { fontWeight: 650, textTransform: "uppercase", fontSize: 11 },
-    type: { color: t.color.textMuted },
-    title: { fontWeight: 650, fontSize: 15, margin: "4px 0 2px" },
-    meta: { color: t.color.textMuted, fontSize: 12 },
+    id: { fontFamily: t.fontMono, ...t.type.monoSm, fontWeight: 650 },
+    pill: { fontWeight: 700, textTransform: "uppercase", fontSize: 11, letterSpacing: 0.3 },
+    type: { ...t.type.metaSm, color: t.color.textMuted },
+    title: { ...t.type.titleMd, margin: "4px 0 2px" },
+    meta: { ...t.type.metaSm, color: t.color.textMuted },
     chips: { display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 },
     chip: {
       fontSize: 11,
