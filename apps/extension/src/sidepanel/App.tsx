@@ -8,8 +8,13 @@ import {
 } from "react";
 import type { Issue, Project, Session } from "@uxcue/schema";
 import { tokens } from "@uxcue/ui";
+import { getPlatform } from "../platform/index";
+import { DRAFT_KEY, type CaptureDraft } from "../capture/draft";
 import { repo } from "./repo";
 import { exportSession } from "./download";
+import { Composer } from "./Composer";
+
+const platform = getPlatform();
 
 const SEVERITY_COLOR: Record<Issue["severity"], string> = {
   blocker: tokens.color.danger,
@@ -32,9 +37,23 @@ export function App() {
   const [status, setStatus] = useState<string>("all");
   const [query, setQuery] = useState("");
   const [busy, setBusy] = useState(false);
+  const [draft, setDraft] = useState<CaptureDraft | null>(null);
 
   const project = projects.find((p) => p.id === projectId);
   const session = sessions.find((s) => s.id === sessionId);
+
+  // Watch chrome.storage for a capture draft written by the service worker.
+  useEffect(() => {
+    void platform.storage.get<CaptureDraft>(DRAFT_KEY).then((d) => d && setDraft(d));
+    platform.storage.onChange((key, value) => {
+      if (key === DRAFT_KEY) setDraft((value as CaptureDraft | undefined) ?? null);
+    });
+  }, []);
+
+  const clearDraft = useCallback(() => {
+    void platform.storage.remove(DRAFT_KEY);
+    setDraft(null);
+  }, []);
 
   useEffect(() => {
     void repo.listProjects().then(setProjects);
@@ -216,6 +235,24 @@ export function App() {
           </button>
         </footer>
       )}
+
+      {draft && !session && (
+        <div data-testid="draft-needs-session" style={S.banner}>
+          Capture ready — select a session to save it.
+        </div>
+      )}
+      {draft && project && session && (
+        <Composer
+          draft={draft}
+          projectId={project.id}
+          sessionId={session.id}
+          onSaved={() => {
+            clearDraft();
+            refreshIssues();
+          }}
+          onDiscard={clearDraft}
+        />
+      )}
     </div>
   );
 }
@@ -319,6 +356,13 @@ const S: Record<string, CSSProperties> = {
   title: { fontWeight: 650, fontSize: 15, margin: "4px 0 2px" },
   meta: { color: tokens.color.textMuted, fontSize: 12 },
   footer: { padding: 12, borderTop: `1px solid ${tokens.color.border}` },
+  banner: {
+    padding: "10px 12px",
+    background: tokens.color.attention,
+    color: "#fff",
+    fontSize: 13,
+    textAlign: "center",
+  },
   primary: {
     width: "100%",
     font: "inherit",

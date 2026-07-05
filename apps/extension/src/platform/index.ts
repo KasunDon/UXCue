@@ -5,11 +5,23 @@
  * (Release 6) and mockable in e2e.
  */
 
+import type { ElementContext, PageContext, CaptureContext } from "@uxcue/schema";
+
 export type PlatformName = "chrome" | "edge" | "firefox" | "mock";
 
-/** Messages the side panel / content script send to the service worker. */
+/** Messages passed between the overlay, service worker, and side panel. */
 export type RuntimeMessage =
-  { type: "PING" } | { type: "CONTENT_READY"; url: string } | { type: "ARM_CAPTURE" };
+  | { type: "PING" }
+  | { type: "CONTENT_READY"; url: string }
+  | { type: "ARM_CAPTURE" }
+  | { type: "CAPTURE_CANCELLED" }
+  | {
+      type: "CAPTURE_SELECTED";
+      element: ElementContext;
+      page: PageContext;
+      capture: CaptureContext;
+    }
+  | { type: "DRAFT_READY" };
 
 export type RuntimeResponse = { ok: true; [k: string]: unknown };
 
@@ -38,9 +50,11 @@ export interface PlatformAdapter {
     onCommand(handler: (command: string) => void): void;
   };
 
-  /** Inject a content script into the ACTIVE tab under activeTab (no host perms). */
+  /** Run code in the ACTIVE tab under activeTab (no host perms, D013). */
   activeTab: {
     injectScript(files: string[]): Promise<void>;
+    /** Inject a self-contained function into the active tab (the overlay). */
+    injectFunction(fn: () => void): Promise<void>;
   };
 
   capture: {
@@ -51,6 +65,8 @@ export interface PlatformAdapter {
   storage: {
     get<T>(key: string): Promise<T | undefined>;
     set(key: string, value: unknown): Promise<void>;
+    remove(key: string): Promise<void>;
+    onChange(handler: (key: string, newValue: unknown) => void): void;
   };
 }
 

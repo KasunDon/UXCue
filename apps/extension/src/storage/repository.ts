@@ -47,6 +47,7 @@ export interface Repository {
   listIssues(sessionId: string): Promise<Issue[]>;
   getIssue(id: string): Promise<Issue | undefined>;
   updateIssue(id: string, patch: IssuePatch): Promise<Issue>;
+  setScreenshots(id: string, screenshots: Issue["screenshots"]): Promise<Issue>;
   deleteIssue(id: string): Promise<void>;
 
   putScreenshot(id: string, blob: Blob): Promise<void>;
@@ -163,6 +164,15 @@ export class IndexedDbRepository implements Repository {
     const existing = await db.get("issues", id);
     if (!existing) throw new Error(`Issue ${id} not found`);
     const updated: Issue = { ...existing, ...patch, updatedAt: now() };
+    await db.put("issues", updated);
+    return updated;
+  }
+
+  async setScreenshots(id: string, screenshots: Issue["screenshots"]): Promise<Issue> {
+    const db = await this.dbPromise;
+    const existing = await db.get("issues", id);
+    if (!existing) throw new Error(`Issue ${id} not found`);
+    const updated: Issue = { ...existing, screenshots, updatedAt: now() };
     await db.put("issues", updated);
     return updated;
   }

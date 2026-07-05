@@ -31,7 +31,9 @@ export default tseslint.config(
   // feature code must go through the adapter so the port + e2e-mock seam holds).
   {
     files: ["apps/extension/src/**/*.{ts,tsx}"],
-    ignores: ["apps/extension/src/platform/**"],
+    // platform/ is the adapter; content/ is the injected-overlay messaging
+    // boundary (self-contained functions that cannot import the adapter).
+    ignores: ["apps/extension/src/platform/**", "apps/extension/src/content/**"],
     rules: {
       "no-restricted-syntax": [
         "error",

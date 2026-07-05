@@ -50,6 +50,11 @@ const chromeAdapter: PlatformAdapter = {
       if (tab?.id == null) return;
       await chrome.scripting.executeScript({ target: { tabId: tab.id }, files });
     },
+    async injectFunction(fn: () => void) {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id == null) return;
+      await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: fn });
+    },
   },
 
   capture: {
@@ -67,6 +72,14 @@ const chromeAdapter: PlatformAdapter = {
     },
     async set(key: string, value: unknown) {
       await chrome.storage.local.set({ [key]: value });
+    },
+    async remove(key: string) {
+      await chrome.storage.local.remove(key);
+    },
+    onChange(handler: (key: string, newValue: unknown) => void) {
+      chrome.storage.local.onChanged.addListener((changes) => {
+        for (const [key, change] of Object.entries(changes)) handler(key, change.newValue);
+      });
     },
   },
 };
