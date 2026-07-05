@@ -11,7 +11,8 @@ import type { Tokens } from "@uxcue/ui";
 import { getPlatform } from "../platform/index";
 import { DRAFT_KEY, type CaptureDraft } from "../capture/draft";
 import { repo } from "./repo";
-import { exportSession, exportSessionInline } from "./download";
+import { exportSession, sessionInlineMarkdown, sessionInlineFilename } from "./download";
+import { MarkdownPreview } from "./MarkdownPreview";
 import { Composer } from "./Composer";
 import { IssueDetail } from "./IssueDetail";
 import { GitHubPanel } from "./GitHubPanel";
@@ -46,6 +47,9 @@ export function App() {
   const [draft, setDraft] = useState<CaptureDraft | null>(null);
   const [selectedId, setSelectedId] = useState<string>();
   const [showGitHub, setShowGitHub] = useState(false);
+  const [preview, setPreview] = useState<{ title: string; md: string; filename: string } | null>(
+    null,
+  );
 
   const project = projects.find((p) => p.id === projectId);
   const session = sessions.find((s) => s.id === sessionId);
@@ -124,7 +128,8 @@ export function App() {
     if (!project || !session) return;
     setBusy(true);
     try {
-      await exportSessionInline(repo, project, session);
+      const { md } = await sessionInlineMarkdown(repo, project, session);
+      setPreview({ title: "Inline review .md", md, filename: sessionInlineFilename(session) });
     } finally {
       setBusy(false);
     }
@@ -341,6 +346,14 @@ export function App() {
       )}
 
       {showGitHub && <GitHubPanel projectId={projectId} onClose={() => setShowGitHub(false)} />}
+      {preview && (
+        <MarkdownPreview
+          title={preview.title}
+          md={preview.md}
+          filename={preview.filename}
+          onClose={() => setPreview(null)}
+        />
+      )}
     </div>
   );
 }

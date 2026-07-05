@@ -1,9 +1,10 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import type { Issue, IssueType, Severity, IssueStatus, AssigneeHint } from "@uxcue/schema";
-import { renderIssueMarkdown } from "@uxcue/markdown";
 import type { Tokens } from "@uxcue/ui";
 import { repo } from "./repo";
 import { useTokens } from "./theme";
+import { issueInlineMarkdown } from "./download";
+import { MarkdownPreview } from "./MarkdownPreview";
 import { GitHubClient } from "../github/client";
 import * as gh from "../github/settings";
 import { publishIssue } from "../github/publish";
@@ -54,6 +55,7 @@ export function IssueDetail({
   });
   const [shots, setShots] = useState<{ el?: string; vp?: string }>({});
   const [copied, setCopied] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
   const [ghUrl, setGhUrl] = useState<string | undefined>(issue.github?.url);
   const [ghBusy, setGhBusy] = useState(false);
   const [ghMsg, setGhMsg] = useState<string>();
@@ -100,17 +102,21 @@ export function IssueDetail({
     await repo.deleteIssue(issue.id);
     onDeleted();
   }
+  // The issue as currently edited (reflects unsaved form changes in exports).
+  const merged = (): Issue => ({
+    ...issue,
+    ...form,
+    expected: form.expected || undefined,
+    suggestedFix: form.suggestedFix || undefined,
+  });
   async function copyMd() {
-    await navigator.clipboard.writeText(
-      renderIssueMarkdown({
-        ...issue,
-        ...form,
-        expected: form.expected || undefined,
-        suggestedFix: form.suggestedFix || undefined,
-      }),
-    );
+    // Self-contained inline markdown (base64 screenshots) — paste-ready for an agent.
+    await navigator.clipboard.writeText(await issueInlineMarkdown(repo, merged()));
     setCopied(true);
     setTimeout(() => setCopied(false), 1200);
+  }
+  async function previewMd() {
+    setPreview(await issueInlineMarkdown(repo, merged()));
   }
   async function createGitHubIssue() {
     setGhMsg(undefined);
@@ -140,6 +146,14 @@ export function IssueDetail({
         <div style={{ flex: 1 }} />
         <button data-testid="detail-copy" onClick={copyMd} style={S.link}>
           {copied ? "Copied ✓" : "Copy md"}
+        </button>
+        <button
+          data-testid="detail-export"
+          onClick={previewMd}
+          style={S.link}
+          title="Preview this issue as a self-contained .md (base64 screenshots), then copy or download"
+        >
+          Preview .md
         </button>
         <button
           data-testid="detail-delete"
@@ -262,6 +276,15 @@ export function IssueDetail({
       <button data-testid="detail-save" onClick={save} style={S.save}>
         Save changes
       </button>
+
+      {preview !== null && (
+        <MarkdownPreview
+          title={`${issue.displayId} · inline .md`}
+          md={preview}
+          filename={`${issue.displayId}.inline.md`}
+          onClose={() => setPreview(null)}
+        />
+      )}
     </div>
   );
 }
