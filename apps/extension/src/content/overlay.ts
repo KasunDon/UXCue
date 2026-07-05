@@ -86,15 +86,24 @@ export function overlayMain(): void {
     return p.join(" > ");
   }
 
+  function descriptor(el: Element): string {
+    const tag = el.tagName.toLowerCase();
+    if (el.id) return `${tag}#${el.id}`;
+    const cls = Array.from(el.classList)[0];
+    return cls ? `${tag}.${cls}` : tag;
+  }
+
   function highlight(el: Element): void {
     const r = el.getBoundingClientRect();
     box.style.top = `${r.top}px`;
     box.style.left = `${r.left}px`;
     box.style.width = `${r.width}px`;
     box.style.height = `${r.height}px`;
-    label.textContent = `${el.tagName.toLowerCase()}  ${Math.round(r.width)}×${Math.round(r.height)}`;
-    label.style.top = `${Math.max(0, r.top - 22)}px`;
-    label.style.left = `${r.left}px`;
+    // VS Code-style label: "div.idea-box  587 × 205"
+    label.innerHTML = `<b style="color:#5eead4">${descriptor(el)}</b>  ${Math.round(r.width)} × ${Math.round(r.height)}`;
+    const above = r.top > 24;
+    label.style.top = `${above ? r.top - 22 : r.bottom + 4}px`;
+    label.style.left = `${Math.max(0, r.left)}px`;
   }
 
   function cleanup(): void {

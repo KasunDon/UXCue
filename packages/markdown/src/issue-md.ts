@@ -1,9 +1,28 @@
-import type { Issue } from "@uxcue/schema";
+import type { Issue, ScreenshotRef } from "@uxcue/schema";
 
 const round = (n: number) => Math.round(n);
 
-function screenshotLine(label: string, filename: string | undefined): string | null {
-  return filename ? `- ${label}: \`screenshots/${filename}\`` : null;
+/** Options for the markdown generators. */
+export interface RenderOptions {
+  /**
+   * When provided (filename -> data: URL), screenshots embed inline as base64
+   * images instead of file-path links, producing a single self-contained
+   * markdown (#7). Default: file links.
+   */
+  images?: Record<string, string>;
+}
+
+function screenshotEntry(
+  displayId: string,
+  label: string,
+  ref: ScreenshotRef | undefined,
+  images: Record<string, string> | undefined,
+): string | null {
+  if (!ref) return null;
+  const dataUrl = images?.[ref.filename];
+  return dataUrl
+    ? `![${displayId} ${label.toLowerCase()}](${dataUrl})`
+    : `- ${label}: \`screenshots/${ref.filename}\``;
 }
 
 /**
@@ -11,7 +30,7 @@ function screenshotLine(label: string, filename: string | undefined): string | n
  * standalone per-issue file. Neutral, agent-ready (D014) — role-based assignee,
  * no vendor names. Format follows docs/04.
  */
-export function renderIssueBlock(issue: Issue): string {
+export function renderIssueBlock(issue: Issue, opts: RenderOptions = {}): string {
   const lines: string[] = [];
   lines.push(`### ${issue.displayId}: ${issue.title}`, "");
   lines.push(`Status: ${issue.status}`);
@@ -50,8 +69,8 @@ export function renderIssueBlock(issue: Issue): string {
   }
 
   const shots = [
-    screenshotLine("Element", issue.screenshots.element?.filename),
-    screenshotLine("Viewport", issue.screenshots.viewport?.filename),
+    screenshotEntry(issue.displayId, "Element", issue.screenshots.element, opts.images),
+    screenshotEntry(issue.displayId, "Viewport", issue.screenshots.viewport, opts.images),
   ].filter((x): x is string => x !== null);
   if (shots.length) lines.push("#### Screenshots", "", ...shots, "");
 
@@ -66,6 +85,6 @@ export function renderIssueBlock(issue: Issue): string {
 }
 
 /** Standalone per-issue markdown file (issues/UX-001.md). */
-export function renderIssueMarkdown(issue: Issue): string {
-  return renderIssueBlock(issue);
+export function renderIssueMarkdown(issue: Issue, opts: RenderOptions = {}): string {
+  return renderIssueBlock(issue, opts);
 }
