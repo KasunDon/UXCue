@@ -27,9 +27,14 @@ export function useHostAccess() {
   const ensureAccess = useCallback(async (): Promise<boolean> => {
     const o = originRef.current;
     if (!o) return false;
-    const granted = await platform.permissions.requestHostAccess(o);
-    setHasAccess(granted);
-    return granted;
+    try {
+      const granted = await platform.permissions.requestHostAccess(o);
+      setHasAccess(granted);
+      return granted;
+    } catch {
+      // request throws if optional_host_permissions is missing (stale build).
+      return false;
+    }
   }, []);
 
   return { origin, hasAccess, ensureAccess };

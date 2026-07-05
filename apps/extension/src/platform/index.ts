@@ -132,4 +132,27 @@ export interface PlatformAdapter {
   };
 }
 
-export { getPlatform } from "./chrome";
+import { getPlatform as getChromePlatform } from "./chrome";
+
+let override: PlatformAdapter | undefined;
+
+/**
+ * A stable proxy so modules that captured `getPlatform()` at import time still
+ * observe a later `setPlatform()` (tests). Every access delegates to the active
+ * adapter — the test override if set, else the real chrome adapter.
+ */
+const live = new Proxy({} as PlatformAdapter, {
+  get(_t, prop) {
+    const target = override ?? getChromePlatform();
+    return target[prop as keyof PlatformAdapter];
+  },
+});
+
+export function getPlatform(): PlatformAdapter {
+  return live;
+}
+
+/** Test-only: swap in a mock adapter (pass `undefined` to reset to chrome). */
+export function setPlatform(p: PlatformAdapter | undefined): void {
+  override = p;
+}

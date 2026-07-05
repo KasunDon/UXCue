@@ -118,7 +118,16 @@ export function Composer({
     setPending(action);
     // Screenshots need per-site host access; request it first (gesture-safe).
     // Console needs none, so don't prompt for it.
-    if (action !== "console") await ensureAccess();
+    if (action !== "console") {
+      const granted = await ensureAccess();
+      if (!granted) {
+        setPending(null);
+        setHint(
+          "Screenshots need one-time access to this site. Click again to approve the prompt — if none appears, rebuild and reload the extension so the latest permissions load.",
+        );
+        return;
+      }
+    }
     const res = (await platform.runtime.send({ type: "TRIGGER_ACTIVE", action })) as {
       sent?: boolean;
     };
