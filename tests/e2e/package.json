@@ -1,0 +1,9 @@
+{
+  "name": "@uxcue/e2e",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Playwright extension e2e harness (D007). Harness proof is the Phase 1 spike UXL-QA-001.",
+  "scripts": {
+    "e2e": "echo 'Playwright extension harness lands in UXL-QA-001 (Phase 1 spike): launchPersistentContext + --load-extension, side panel as extension page, SW via evaluate.' && exit 0"
+  }
+}
