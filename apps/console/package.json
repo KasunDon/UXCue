@@ -1,0 +1,6 @@
+{
+  "name": "@uxcue/console",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Cloud console SPA. DEFERRED per D016 — not built until cloud (Phase 5) is revisited."
+}

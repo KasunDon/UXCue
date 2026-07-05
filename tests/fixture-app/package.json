@@ -1,0 +1,6 @@
+{
+  "name": "@uxcue/fixture-app",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Deterministic defect app for capture/selector/crop tests. Built first in Phase 2 (docs/07 routes/elements)."
+}
