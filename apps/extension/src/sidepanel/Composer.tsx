@@ -1,8 +1,9 @@
 import { useState, type CSSProperties } from "react";
 import type { IssueType, Severity, AssigneeHint } from "@uxcue/schema";
-import { tokens } from "@uxcue/ui";
+import type { Tokens } from "@uxcue/ui";
 import { repo } from "./repo";
 import { createIssueFromDraft, type CaptureDraft, type ComposerForm } from "../capture/draft";
+import { useTokens } from "./theme";
 
 const TYPES: IssueType[] = [
   "visual-defect",
@@ -40,6 +41,8 @@ export function Composer({
     assigneeHint: "code-agent",
   });
   const [saving, setSaving] = useState(false);
+  const t = useTokens();
+  const S = makeStyles(t);
   const set = <K extends keyof ComposerForm>(k: K, v: ComposerForm[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
@@ -66,7 +69,7 @@ export function Composer({
 
         <div style={S.target}>
           {draft.element ? (
-            <code style={{ fontFamily: tokens.fontMono, fontSize: 12 }}>
+            <code style={{ fontFamily: t.fontMono, fontSize: 12 }}>
               {draft.element.selector} · {draft.element.selectorStatus}
             </code>
           ) : (
@@ -74,7 +77,7 @@ export function Composer({
           )}
           <div
             data-testid="composer-attachments"
-            style={{ color: tokens.color.textMuted, fontSize: 12, marginTop: 4 }}
+            style={{ color: t.color.textMuted, fontSize: 12, marginTop: 4 }}
           >
             {[
               draft.shots.element && "cropped shot",
@@ -118,6 +121,7 @@ export function Composer({
             value={form.type}
             opts={TYPES}
             onChange={(v) => set("type", v as IssueType)}
+            s={S}
           />
           <Select
             label="Severity"
@@ -125,6 +129,7 @@ export function Composer({
             value={form.severity}
             opts={SEVERITIES}
             onChange={(v) => set("severity", v as Severity)}
+            s={S}
           />
         </div>
         <div style={S.row}>
@@ -134,6 +139,7 @@ export function Composer({
             value={form.assigneeHint}
             opts={ASSIGNEES}
             onChange={(v) => set("assigneeHint", v as AssigneeHint)}
+            s={S}
           />
         </div>
 
@@ -158,21 +164,23 @@ function Select({
   opts,
   onChange,
   testid,
+  s,
 }: {
   label: string;
   value: string;
   opts: string[];
   onChange: (v: string) => void;
   testid: string;
+  s: Record<string, CSSProperties>;
 }) {
   return (
     <div style={{ flex: 1 }}>
-      <label style={S.label}>{label}</label>
+      <label style={s.label}>{label}</label>
       <select
         data-testid={testid}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        style={S.input}
+        style={s.input}
       >
         {opts.map((o) => (
           <option key={o} value={o}>
@@ -184,57 +192,67 @@ function Select({
   );
 }
 
-const S: Record<string, CSSProperties> = {
-  backdrop: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(11,15,20,.35)",
-    display: "flex",
-    alignItems: "flex-end",
-    zIndex: 10,
-  },
-  sheet: {
-    background: tokens.color.surface,
-    width: "100%",
-    maxHeight: "92vh",
-    overflowY: "auto",
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    padding: 16,
-    boxShadow: "0 -8px 24px rgba(0,0,0,.2)",
-  },
-  head: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
-  x: { border: "none", background: "none", fontSize: 16, cursor: "pointer" },
-  target: {
-    background: tokens.color.surfaceMuted,
-    borderRadius: tokens.radius,
-    padding: "6px 8px",
-    marginBottom: 12,
-    overflowX: "auto",
-    whiteSpace: "nowrap",
-  },
-  label: { display: "block", fontSize: 12, fontWeight: 650, margin: "8px 0 3px" },
-  input: {
-    width: "100%",
-    boxSizing: "border-box",
-    font: "inherit",
-    fontSize: 13,
-    padding: "6px 8px",
-    borderRadius: tokens.radius,
-    border: `1px solid ${tokens.color.border}`,
-  },
-  row: { display: "flex", gap: 8 },
-  actions: { marginTop: 14 },
-  save: {
-    width: "100%",
-    font: "inherit",
-    fontSize: 14,
-    fontWeight: 650,
-    padding: "9px 12px",
-    borderRadius: tokens.radius,
-    border: "none",
-    background: tokens.color.primary,
-    color: "#fff",
-    cursor: "pointer",
-  },
-};
+function makeStyles(t: Tokens): Record<string, CSSProperties> {
+  return {
+    backdrop: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(11,15,20,.45)",
+      display: "flex",
+      alignItems: "flex-end",
+      zIndex: 10,
+    },
+    sheet: {
+      background: t.color.surface,
+      color: t.color.text,
+      width: "100%",
+      maxHeight: "92vh",
+      overflowY: "auto",
+      borderTopLeftRadius: 12,
+      borderTopRightRadius: 12,
+      padding: 16,
+      boxShadow: "0 -8px 24px rgba(0,0,0,.35)",
+    },
+    head: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    x: { border: "none", background: "none", fontSize: 16, cursor: "pointer", color: t.color.text },
+    target: {
+      background: t.color.surfaceMuted,
+      borderRadius: t.radius,
+      padding: "6px 8px",
+      marginBottom: 12,
+      overflowX: "auto",
+      whiteSpace: "nowrap",
+    },
+    label: { display: "block", fontSize: 12, fontWeight: 650, margin: "8px 0 3px" },
+    input: {
+      width: "100%",
+      boxSizing: "border-box",
+      font: "inherit",
+      fontSize: 13,
+      padding: "6px 8px",
+      borderRadius: t.radius,
+      border: `1px solid ${t.color.border}`,
+      background: t.color.surface,
+      color: t.color.text,
+    },
+    row: { display: "flex", gap: 8 },
+    actions: { marginTop: 14 },
+    save: {
+      width: "100%",
+      font: "inherit",
+      fontSize: 14,
+      fontWeight: 650,
+      padding: "9px 12px",
+      borderRadius: t.radius,
+      border: "none",
+      background: t.color.primary,
+      color: "#fff",
+      cursor: "pointer",
+    },
+  };
+}

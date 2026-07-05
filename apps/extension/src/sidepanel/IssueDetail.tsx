@@ -1,8 +1,9 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import type { Issue, IssueType, Severity, IssueStatus, AssigneeHint } from "@uxcue/schema";
 import { renderIssueMarkdown } from "@uxcue/markdown";
-import { tokens } from "@uxcue/ui";
+import type { Tokens } from "@uxcue/ui";
 import { repo } from "./repo";
+import { useTokens } from "./theme";
 
 const TYPES: IssueType[] = [
   "visual-defect",
@@ -50,6 +51,8 @@ export function IssueDetail({
   });
   const [shots, setShots] = useState<{ el?: string; vp?: string }>({});
   const [copied, setCopied] = useState(false);
+  const t = useTokens();
+  const S = makeStyles(t);
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
@@ -110,7 +113,7 @@ export function IssueDetail({
         <button data-testid="detail-back" onClick={onBack} style={S.link}>
           ← Back
         </button>
-        <strong style={{ fontFamily: tokens.fontMono }}>{issue.displayId}</strong>
+        <strong style={{ fontFamily: t.fontMono }}>{issue.displayId}</strong>
         <div style={{ flex: 1 }} />
         <button data-testid="detail-copy" onClick={copyMd} style={S.link}>
           {copied ? "Copied ✓" : "Copy md"}
@@ -118,7 +121,7 @@ export function IssueDetail({
         <button
           data-testid="detail-delete"
           onClick={del}
-          style={{ ...S.link, color: tokens.color.danger }}
+          style={{ ...S.link, color: t.color.danger }}
         >
           Delete
         </button>
@@ -166,12 +169,14 @@ export function IssueDetail({
           value={form.type}
           opts={TYPES}
           onChange={(v) => set("type", v as IssueType)}
+          s={S}
         />
         <Sel
           label="Severity"
           value={form.severity}
           opts={SEVERITIES}
           onChange={(v) => set("severity", v as Severity)}
+          s={S}
         />
       </div>
       <div style={S.row}>
@@ -181,21 +186,22 @@ export function IssueDetail({
           value={form.status}
           opts={STATUSES}
           onChange={(v) => set("status", v as IssueStatus)}
+          s={S}
         />
         <Sel
           label="Assignee"
           value={form.assigneeHint}
           opts={ASSIGNEES}
           onChange={(v) => set("assigneeHint", v as AssigneeHint)}
+          s={S}
         />
       </div>
 
       {issue.target && (
         <div style={S.meta}>
           <div>
-            <b>Selector</b>{" "}
-            <code style={{ fontFamily: tokens.fontMono }}>{issue.target.selector}</code> ·{" "}
-            {issue.target.selectorStatus}
+            <b>Selector</b> <code style={{ fontFamily: t.fontMono }}>{issue.target.selector}</code>{" "}
+            · {issue.target.selectorStatus}
           </div>
           <div>
             <b>Page</b> {issue.page.pathname} · {issue.capture.viewport.width}×
@@ -217,21 +223,23 @@ function Sel({
   opts,
   onChange,
   testid,
+  s,
 }: {
   label: string;
   value: string;
   opts: string[];
   onChange: (v: string) => void;
   testid?: string;
+  s: Record<string, CSSProperties>;
 }) {
   return (
     <div style={{ flex: 1 }}>
-      <label style={S.label}>{label}</label>
+      <label style={s.label}>{label}</label>
       <select
         data-testid={testid}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        style={S.input}
+        style={s.input}
       >
         {opts.map((o) => (
           <option key={o} value={o}>
@@ -243,54 +251,56 @@ function Sel({
   );
 }
 
-const S: Record<string, CSSProperties> = {
-  root: { flex: 1, overflowY: "auto", padding: 16, background: tokens.color.bg },
-  top: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 },
-  link: {
-    border: "none",
-    background: "none",
-    color: tokens.color.link,
-    cursor: "pointer",
-    font: "inherit",
-    fontSize: 13,
-  },
-  shots: { display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 },
-  img: {
-    maxWidth: "100%",
-    border: `1px solid ${tokens.color.border}`,
-    borderRadius: tokens.radius,
-  },
-  label: { display: "block", fontSize: 12, fontWeight: 650, margin: "8px 0 3px" },
-  input: {
-    width: "100%",
-    boxSizing: "border-box",
-    font: "inherit",
-    fontSize: 13,
-    padding: "6px 8px",
-    borderRadius: tokens.radius,
-    border: `1px solid ${tokens.color.border}`,
-  },
-  row: { display: "flex", gap: 8 },
-  meta: {
-    fontSize: 12,
-    color: tokens.color.textMuted,
-    margin: "12px 0",
-    display: "flex",
-    flexDirection: "column",
-    gap: 4,
-    overflowX: "auto",
-  },
-  save: {
-    width: "100%",
-    font: "inherit",
-    fontSize: 14,
-    fontWeight: 650,
-    padding: "9px 12px",
-    borderRadius: tokens.radius,
-    border: "none",
-    background: tokens.color.primary,
-    color: "#fff",
-    cursor: "pointer",
-    marginTop: 8,
-  },
-};
+function makeStyles(t: Tokens): Record<string, CSSProperties> {
+  return {
+    root: { flex: 1, overflowY: "auto", padding: 16, background: t.color.bg },
+    top: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 },
+    link: {
+      border: "none",
+      background: "none",
+      color: t.color.link,
+      cursor: "pointer",
+      font: "inherit",
+      fontSize: 13,
+    },
+    shots: { display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 },
+    img: {
+      maxWidth: "100%",
+      border: `1px solid ${t.color.border}`,
+      borderRadius: t.radius,
+    },
+    label: { display: "block", fontSize: 12, fontWeight: 650, margin: "8px 0 3px" },
+    input: {
+      width: "100%",
+      boxSizing: "border-box",
+      font: "inherit",
+      fontSize: 13,
+      padding: "6px 8px",
+      borderRadius: t.radius,
+      border: `1px solid ${t.color.border}`,
+    },
+    row: { display: "flex", gap: 8 },
+    meta: {
+      fontSize: 12,
+      color: t.color.textMuted,
+      margin: "12px 0",
+      display: "flex",
+      flexDirection: "column",
+      gap: 4,
+      overflowX: "auto",
+    },
+    save: {
+      width: "100%",
+      font: "inherit",
+      fontSize: 14,
+      fontWeight: 650,
+      padding: "9px 12px",
+      borderRadius: t.radius,
+      border: "none",
+      background: t.color.primary,
+      color: "#fff",
+      cursor: "pointer",
+      marginTop: 8,
+    },
+  };
+}
