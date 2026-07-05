@@ -25,6 +25,9 @@ export default defineManifest({
     "storage",
     "downloads",
   ],
+  // Needed for GitHub API calls from the extension (#9). raw.githubusercontent
+  // is where committed screenshots resolve for the issue body.
+  host_permissions: ["https://api.github.com/*", "https://raw.githubusercontent.com/*"],
   content_scripts: [
     {
       matches: ["http://*/*", "https://*/*"],

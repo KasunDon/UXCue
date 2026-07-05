@@ -9,4 +9,5 @@
 export const MARKDOWN_PACKAGE = "@uxcue/markdown" as const;
 
 export { renderReviewMarkdown, type ReviewInput } from "./review-md";
-export { renderIssueMarkdown, renderIssueBlock } from "./issue-md";
+export { renderIssueMarkdown, renderIssueBlock, type RenderOptions } from "./issue-md";
+export { renderGitHubBody, gitHubTitle, labelsFor, type GitHubBodyOptions } from "./github-body";
