@@ -66,6 +66,8 @@ export interface PlatformAdapter {
   sidePanel: {
     /** Open the side panel when the toolbar action is clicked. */
     openOnActionClick(open: boolean): Promise<void>;
+    /** Open the side panel now (must be called from a user gesture). */
+    open(tabId: number): Promise<void>;
   };
 
   commands: {
@@ -81,6 +83,8 @@ export interface PlatformAdapter {
   tabs: {
     /** Message a content script in a specific tab (right-click capture). */
     sendMessage(tabId: number, message: RuntimeMessage): Promise<void>;
+    /** (Re)inject the declared content scripts into an already-open tab. */
+    injectContentScripts(tabId: number): Promise<void>;
   };
 
   /** Run code in the ACTIVE tab under activeTab (no host perms, D013). */

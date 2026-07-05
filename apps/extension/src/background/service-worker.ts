@@ -43,12 +43,26 @@ platform.contextMenus.register([
   { id: "uxcue-console", title: "Add console logs", parentId: "uxcue" },
 ]);
 
-platform.contextMenus.onClicked((menuItemId, tabId) => {
+platform.contextMenus.onClicked(async (menuItemId, tabId) => {
   const trigger = MENU[menuItemId];
-  if (trigger && tabId != null) {
-    platform.tabs
-      .sendMessage(tabId, { type: trigger } as RuntimeMessage)
-      .catch((e) => console.error("[uxcue] menu", menuItemId, e));
+  if (!trigger || tabId == null) return;
+
+  // Open the composer surface (the click is a user gesture, so this is allowed).
+  platform.sidePanel.open(tabId).catch(() => {});
+
+  try {
+    await platform.tabs.sendMessage(tabId, { type: trigger } as RuntimeMessage);
+  } catch {
+    // Content script not present (page opened before the extension loaded).
+    // Inject the declared scripts now so this and future captures work.
+    await platform.tabs.injectContentScripts(tabId);
+    if (trigger === "CAPTURE_CONTEXT") {
+      console.warn("[uxcue] armed this tab — right-click the element again to capture it");
+    } else {
+      await platform.tabs
+        .sendMessage(tabId, { type: trigger } as RuntimeMessage)
+        .catch((e) => console.error("[uxcue] menu retry", menuItemId, e));
+    }
   }
 });
 

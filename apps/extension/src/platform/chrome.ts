@@ -36,6 +36,9 @@ const chromeAdapter: PlatformAdapter = {
     async openOnActionClick(open: boolean) {
       await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: open });
     },
+    async open(tabId: number) {
+      await chrome.sidePanel.open({ tabId });
+    },
   },
 
   commands: {
@@ -67,6 +70,17 @@ const chromeAdapter: PlatformAdapter = {
   tabs: {
     async sendMessage(tabId, message) {
       await chrome.tabs.sendMessage(tabId, message);
+    },
+    async injectContentScripts(tabId) {
+      const scripts = chrome.runtime.getManifest().content_scripts ?? [];
+      for (const cs of scripts) {
+        if (!cs.js?.length) continue;
+        const world =
+          (cs as { world?: "MAIN" | "ISOLATED" }).world === "MAIN" ? "MAIN" : "ISOLATED";
+        await chrome.scripting
+          .executeScript({ target: { tabId }, files: cs.js, world })
+          .catch(() => {});
+      }
     },
   },
 

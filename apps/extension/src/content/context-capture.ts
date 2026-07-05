@@ -18,29 +18,36 @@ import { pickArea } from "./area-overlay";
 const MAX_LOGS = 50;
 const recentLogs: ConsoleEntry[] = [];
 
-// Buffer console entries forwarded by the MAIN-world hook (console-hook.ts).
-window.addEventListener("message", (e) => {
-  const entry = (e.data as { __uxcueLog?: ConsoleEntry })?.__uxcueLog;
-  if (entry && typeof entry.level === "string") {
-    recentLogs.push(entry);
-    if (recentLogs.length > MAX_LOGS) recentLogs.shift();
-  }
-});
-
 const recentConsole = (): ConsoleEntry[] => recentLogs.slice(-MAX_LOGS);
 
 let lastRightClicked: Element | null = null;
-document.addEventListener(
-  "contextmenu",
-  (e) => {
-    lastRightClicked = e.target as Element | null;
-  },
-  true,
-);
 
-chrome.runtime.onMessage.addListener((message: { type?: string }) => {
-  void handle(message?.type);
-});
+// Guard against double-init (the SW may re-inject this into an already-open tab).
+const w = window as unknown as { __uxcueCaptureInit?: boolean };
+if (!w.__uxcueCaptureInit) {
+  w.__uxcueCaptureInit = true;
+
+  // Buffer console entries forwarded by the MAIN-world hook (console-hook.ts).
+  window.addEventListener("message", (e) => {
+    const entry = (e.data as { __uxcueLog?: ConsoleEntry })?.__uxcueLog;
+    if (entry && typeof entry.level === "string") {
+      recentLogs.push(entry);
+      if (recentLogs.length > MAX_LOGS) recentLogs.shift();
+    }
+  });
+
+  document.addEventListener(
+    "contextmenu",
+    (e) => {
+      lastRightClicked = e.target as Element | null;
+    },
+    true,
+  );
+
+  chrome.runtime.onMessage.addListener((message: { type?: string }) => {
+    void handle(message?.type);
+  });
+}
 
 async function handle(type: string | undefined): Promise<void> {
   try {
