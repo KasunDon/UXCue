@@ -61,6 +61,7 @@ export function Composer({
   const [flash, setFlash] = useState<null | "shot" | "console">(null);
   const [pending, setPending] = useState<null | "viewport" | "area" | "console">(null);
   const [hint, setHint] = useState<string>();
+  const [zoom, setZoom] = useState<string | null>(null);
 
   // Load thumbnails for whatever the draft currently holds (live-updates as
   // the service worker merges new captures into the draft in storage).
@@ -186,6 +187,7 @@ export function Composer({
               label="Cropped element"
               dim={draft.shots.element}
               flash={flash === "shot"}
+              onOpen={setZoom}
               s={S}
             />
           )}
@@ -196,6 +198,7 @@ export function Composer({
               label="Full page"
               dim={draft.shots.viewport}
               flash={flash === "shot"}
+              onOpen={setZoom}
               s={S}
             />
           )}
@@ -310,6 +313,17 @@ export function Composer({
           </button>
         </div>
       </div>
+
+      {zoom && (
+        <div
+          data-testid="preview-zoom"
+          style={S.zoomBackdrop}
+          onClick={() => setZoom(null)}
+          title="Click to close"
+        >
+          <img src={zoom} alt="Screenshot full size" style={S.zoomImg} />
+        </div>
+      )}
     </div>
   );
 }
@@ -320,6 +334,7 @@ function Thumb({
   dim,
   flash,
   testid,
+  onOpen,
   s,
 }: {
   src: string;
@@ -327,10 +342,17 @@ function Thumb({
   dim?: { width: number; height: number };
   flash: boolean;
   testid?: string;
+  onOpen?: (src: string) => void;
   s: Record<string, CSSProperties>;
 }) {
   return (
-    <div data-testid={testid} style={{ ...s.thumbCard, ...(flash ? s.flash : {}) }}>
+    <button
+      type="button"
+      data-testid={testid}
+      onClick={() => onOpen?.(src)}
+      title="Click to enlarge"
+      style={{ ...s.thumbCard, ...(flash ? s.flash : {}) }}
+    >
       <img src={src} alt={label} style={s.thumbImg} />
       <div style={s.thumbMeta}>
         <span>{label}</span>
@@ -340,7 +362,7 @@ function Thumb({
           </span>
         )}
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -401,6 +423,10 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
     attachEmpty: { color: t.color.textMuted, fontSize: 13 },
     thumbCard: {
       width: 96,
+      padding: 0,
+      font: "inherit",
+      textAlign: "left",
+      cursor: "pointer",
       border: `1px solid ${t.color.border}`,
       borderRadius: t.radius,
       overflow: "hidden",
@@ -439,6 +465,24 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       borderTop: `1px solid ${t.color.border}`,
     },
     flash: { borderColor: t.color.primary, boxShadow: `0 0 0 2px ${t.color.primary}55` },
+    zoomBackdrop: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(11,15,20,.85)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 12,
+      zIndex: 40,
+      cursor: "zoom-out",
+    },
+    zoomImg: {
+      maxWidth: "100%",
+      maxHeight: "100%",
+      objectFit: "contain",
+      borderRadius: t.radius,
+      boxShadow: "0 8px 32px rgba(0,0,0,.5)",
+    },
     label: { display: "block", fontSize: 13, fontWeight: 650, margin: "10px 0 4px" },
     input: {
       width: "100%",

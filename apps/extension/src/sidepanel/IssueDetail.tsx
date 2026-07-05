@@ -56,6 +56,7 @@ export function IssueDetail({
   const [shots, setShots] = useState<{ el?: string; vp?: string }>({});
   const [copied, setCopied] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const [zoom, setZoom] = useState<string | null>(null);
   const [ghUrl, setGhUrl] = useState<string | undefined>(issue.github?.url);
   const [ghBusy, setGhBusy] = useState(false);
   const [ghMsg, setGhMsg] = useState<string>();
@@ -166,8 +167,24 @@ export function IssueDetail({
 
       {(shots.el || shots.vp) && (
         <div style={S.shots}>
-          {shots.el && <img src={shots.el} alt={`${issue.displayId} element`} style={S.img} />}
-          {shots.vp && <img src={shots.vp} alt={`${issue.displayId} viewport`} style={S.img} />}
+          {shots.el && (
+            <img
+              src={shots.el}
+              alt={`${issue.displayId} element`}
+              onClick={() => setZoom(shots.el!)}
+              title="Click to enlarge"
+              style={S.img}
+            />
+          )}
+          {shots.vp && (
+            <img
+              src={shots.vp}
+              alt={`${issue.displayId} viewport`}
+              onClick={() => setZoom(shots.vp!)}
+              title="Click to enlarge"
+              style={S.img}
+            />
+          )}
         </div>
       )}
 
@@ -285,6 +302,17 @@ export function IssueDetail({
           onClose={() => setPreview(null)}
         />
       )}
+
+      {zoom && (
+        <div
+          data-testid="detail-zoom"
+          style={S.zoomBackdrop}
+          onClick={() => setZoom(null)}
+          title="Click to close"
+        >
+          <img src={zoom} alt="Screenshot full size" style={S.zoomImg} />
+        </div>
+      )}
     </div>
   );
 }
@@ -340,6 +368,25 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       maxWidth: "100%",
       border: `1px solid ${t.color.border}`,
       borderRadius: t.radius,
+      cursor: "zoom-in",
+    },
+    zoomBackdrop: {
+      position: "fixed",
+      inset: 0,
+      background: "rgba(11,15,20,.85)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 12,
+      zIndex: 40,
+      cursor: "zoom-out",
+    },
+    zoomImg: {
+      maxWidth: "100%",
+      maxHeight: "100%",
+      objectFit: "contain",
+      borderRadius: t.radius,
+      boxShadow: "0 8px 32px rgba(0,0,0,.5)",
     },
     label: { display: "block", fontSize: 12, fontWeight: 650, margin: "8px 0 3px" },
     input: {
