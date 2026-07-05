@@ -118,10 +118,11 @@ export interface PlatformAdapter {
   permissions: {
     /** Origin of the active tab (needs the "tabs" permission), or null. */
     activeTabOrigin(): Promise<string | null>;
-    /** Whether the extension already holds host access for this origin. */
-    hasHostAccess(origin: string): Promise<boolean>;
-    /** Prompt for host access to this origin (no-op prompt if already granted). */
-    requestHostAccess(origin: string): Promise<boolean>;
+    /** Whether the extension already holds host access for these match patterns. */
+    hasHostAccess(patterns: string[]): Promise<boolean>;
+    /** Prompt for host access (no-op prompt if already granted). May throw if a
+     *  pattern isn't in optional_host_permissions (e.g. a stale build). */
+    requestHostAccess(patterns: string[]): Promise<boolean>;
   };
 
   storage: {

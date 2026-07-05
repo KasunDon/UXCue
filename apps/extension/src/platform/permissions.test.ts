@@ -13,24 +13,25 @@ describe("permissions adapter", () => {
   });
 
   it("starts without host access and grants it on request", async () => {
-    const p = createMockPlatform({ activeOrigin: "https://shop.test" });
-    expect(await p.permissions.hasHostAccess("https://shop.test")).toBe(false);
+    const p = createMockPlatform();
+    const patterns = ["https://shop.test/*"];
+    expect(await p.permissions.hasHostAccess(patterns)).toBe(false);
 
-    expect(await p.permissions.requestHostAccess("https://shop.test")).toBe(true);
-    expect(await p.permissions.hasHostAccess("https://shop.test")).toBe(true);
+    expect(await p.permissions.requestHostAccess(patterns)).toBe(true);
+    expect(await p.permissions.hasHostAccess(patterns)).toBe(true);
   });
 
-  it("is idempotent — re-requesting a granted origin resolves true without changing state", async () => {
+  it("is idempotent — re-requesting a granted scope resolves true without changing state", async () => {
     const p = createMockPlatform();
-    await p.permissions.requestHostAccess("https://a.test");
-    expect(await p.permissions.requestHostAccess("https://a.test")).toBe(true);
-    expect([...p.grantedOrigins]).toEqual(["https://a.test"]);
+    await p.permissions.requestHostAccess(["https://a.test/*"]);
+    expect(await p.permissions.requestHostAccess(["https://a.test/*"])).toBe(true);
+    expect([...p.grantedOrigins]).toEqual(["https://a.test/*"]);
   });
 
   it("reflects the user declining the prompt", async () => {
     const p = createMockPlatform({ grantAccess: false });
-    expect(await p.permissions.requestHostAccess("https://a.test")).toBe(false);
-    expect(await p.permissions.hasHostAccess("https://a.test")).toBe(false);
+    expect(await p.permissions.requestHostAccess(["https://a.test/*"])).toBe(false);
+    expect(await p.permissions.hasHostAccess(["https://a.test/*"])).toBe(false);
   });
 
   it("returns null when there is no http(s) active tab", async () => {

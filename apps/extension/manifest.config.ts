@@ -34,21 +34,16 @@ export default defineManifest({
   // which a side-panel click can't grant via activeTab. We request the *current*
   // origin at runtime from the user gesture, so the user approves each site
   // (never a static all-sites grant). Anticipated by D013's per-site follow-up.
+  // @ts-expect-error `optional_host_permissions` is valid MV3, missing from CRXJS's types
   optional_host_permissions: ["http://*/*", "https://*/*"],
   content_scripts: [
     {
+      // Isolated world: right-click capture + buffers uncaught errors/rejections.
+      // (A MAIN-world console.* hook is a follow-up — CRXJS wraps content scripts
+      // in a chrome.runtime loader that can't run in the MAIN world.)
       matches: ["http://*/*", "https://*/*"],
       js: ["src/content/context-capture.ts"],
-      run_at: "document_idle",
-    },
-    {
-      // MAIN world so it sees the page's own console; document_start to buffer
-      // from load. Injected by Chrome, so CSP-safe (not inline injection).
-      matches: ["http://*/*", "https://*/*"],
-      js: ["src/content/console-hook.ts"],
       run_at: "document_start",
-      // @ts-expect-error `world` is a valid MV3 field missing from CRXJS's manifest types
-      world: "MAIN",
     },
   ],
   commands: {

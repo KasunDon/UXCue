@@ -48,7 +48,7 @@ export function Composer({
     assigneeHint: "unassigned",
   });
   const [saving, setSaving] = useState(false);
-  const { ensureAccess } = useHostAccess();
+  const { ensureAccess, error: accessError } = useHostAccess();
   const t = useTokens();
   const S = makeStyles(t);
   const set = <K extends keyof ComposerForm>(k: K, v: ComposerForm[K]) =>
@@ -123,7 +123,9 @@ export function Composer({
       if (!granted) {
         setPending(null);
         setHint(
-          "Screenshots need one-time access to this site. Click again to approve the prompt — if none appears, rebuild and reload the extension so the latest permissions load.",
+          accessError
+            ? `Couldn't request site access: ${accessError}. Rebuild and reload the extension.`
+            : "Screenshots need one-time access to this site. Click again to approve the prompt — if none appears, rebuild and reload the extension so the latest permissions load.",
         );
         return;
       }

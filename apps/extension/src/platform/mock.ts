@@ -123,12 +123,12 @@ export function createMockPlatform(overrides?: Partial<MockPlatform>): MockPlatf
       async activeTabOrigin() {
         return p.activeOrigin;
       },
-      async hasHostAccess(origin) {
-        return p.grantedOrigins.has(origin);
+      async hasHostAccess(patterns) {
+        return patterns.every((pat) => p.grantedOrigins.has(pat));
       },
-      async requestHostAccess(origin) {
+      async requestHostAccess(patterns) {
         if (!p.grantAccess) return false;
-        p.grantedOrigins.add(origin);
+        for (const pat of patterns) p.grantedOrigins.add(pat);
         return true;
       },
     },

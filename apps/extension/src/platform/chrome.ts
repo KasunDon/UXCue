@@ -123,20 +123,32 @@ const chromeAdapter: PlatformAdapter = {
 
   permissions: {
     async activeTabOrigin(): Promise<string | null> {
-      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-      if (!tab?.url) return null;
-      try {
-        const { protocol, origin } = new URL(tab.url);
-        return protocol === "http:" || protocol === "https:" ? origin : null;
-      } catch {
-        return null;
+      // The side panel's focus can make lastFocusedWindow miss, so fall back to
+      // currentWindow, then any window with an active http(s) tab.
+      const queries: chrome.tabs.QueryInfo[] = [
+        { active: true, lastFocusedWindow: true },
+        { active: true, currentWindow: true },
+        { active: true },
+      ];
+      for (const q of queries) {
+        const tabs = await chrome.tabs.query(q);
+        for (const tab of tabs) {
+          if (!tab.url) continue;
+          try {
+            const { protocol, origin } = new URL(tab.url);
+            if (protocol === "http:" || protocol === "https:") return origin;
+          } catch {
+            /* not a URL we can request */
+          }
+        }
       }
+      return null;
     },
-    hasHostAccess(origin: string): Promise<boolean> {
-      return chrome.permissions.contains({ origins: [`${origin}/*`] });
+    hasHostAccess(patterns: string[]): Promise<boolean> {
+      return chrome.permissions.contains({ origins: patterns });
     },
-    requestHostAccess(origin: string): Promise<boolean> {
-      return chrome.permissions.request({ origins: [`${origin}/*`] });
+    requestHostAccess(patterns: string[]): Promise<boolean> {
+      return chrome.permissions.request({ origins: patterns });
     },
   },
 

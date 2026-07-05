@@ -28,7 +28,21 @@ const w = window as unknown as { __uxcueCaptureInit?: boolean };
 if (!w.__uxcueCaptureInit) {
   w.__uxcueCaptureInit = true;
 
-  // Buffer console entries forwarded by the MAIN-world hook (console-hook.ts).
+  const pushLog = (level: ConsoleEntry["level"], text: string) => {
+    recentLogs.push({ level, text: text.slice(0, 2000), at: new Date().toISOString() });
+    if (recentLogs.length > MAX_LOGS) recentLogs.shift();
+  };
+
+  // Buffer uncaught errors + rejections from the page (isolated world sees these
+  // window events). CSP-safe; no MAIN world needed. console.* method interception
+  // is a follow-up (needs a MAIN-world hook that survives the CRXJS loader).
+  window.addEventListener("error", (e) => pushLog("error", e.message || "Uncaught error"));
+  window.addEventListener("unhandledrejection", (e) => {
+    const reason = (e as PromiseRejectionEvent).reason as { message?: string } | undefined;
+    pushLog("error", "Unhandled rejection: " + (reason?.message ?? String(reason)));
+  });
+
+  // Also accept entries from a future MAIN-world console hook (postMessage).
   window.addEventListener("message", (e) => {
     const entry = (e.data as { __uxcueLog?: ConsoleEntry })?.__uxcueLog;
     if (entry && typeof entry.level === "string") {
