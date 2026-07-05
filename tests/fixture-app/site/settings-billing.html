@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Billing</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <nav class="app-nav">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/settings/billing">Billing</a>
+      <a href="/settings/profile">Profile</a>
+      <a href="/responsive">Responsive</a>
+    </nav>
+    <div class="hero"><h1>Billing</h1></div>
+    <section class="card">
+      <h2>Plan</h2>
+      <!-- DEFECT: cramped action row makes this primary button's label wrap -->
+      <div class="billing-actions">
+        <button data-testid="upgrade-plan-button" class="btn btn-primary">Upgrade plan now</button>
+        <button class="btn btn-secondary">Cancel</button>
+      </div>
+      <p class="muted">You are on the Free plan.</p>
+    </section>
+  </body>
+</html>

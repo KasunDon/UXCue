@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profile</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <nav class="app-nav">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/settings/billing">Billing</a>
+      <a href="/settings/profile">Profile</a>
+      <a href="/responsive">Responsive</a>
+    </nav>
+    <div class="hero"><h1>Profile</h1></div>
+    <form>
+      <label>Name <input id="name" name="name" class="input" /></label>
+      <!-- DEFECT: low-contrast helper copy fails WCAG AA -->
+      <p class="muted">This name is shown to your teammates.</p>
+      <button class="btn btn-primary" type="button">Save changes</button>
+    </form>
+  </body>
+</html>

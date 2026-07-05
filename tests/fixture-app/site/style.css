@@ -1,0 +1,77 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #101418;
+}
+body {
+  margin: 0;
+  padding: 24px;
+  max-width: 1100px;
+}
+nav.app-nav {
+  display: flex;
+  gap: 16px;
+  border-bottom: 1px solid #d4dde7;
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+}
+nav.app-nav a {
+  color: #2563eb;
+  text-decoration: none;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #d4dde7;
+  background: #fff;
+  cursor: pointer;
+}
+.btn-primary {
+  background: #00a88f;
+  color: #fff;
+  border-color: #00a88f;
+}
+
+/* DEFECT: billing action row squeezes the primary button so its label wraps */
+.billing-actions {
+  display: flex;
+  gap: 4px;
+  width: 220px;
+}
+.billing-actions .btn-primary {
+  min-width: 0;
+}
+
+/* DEFECT: card grid has uneven/too-tight gaps */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.grid .card {
+  border: 1px solid #d4dde7;
+  padding: 12px;
+}
+
+/* DEFECT: low-contrast helper copy (fails WCAG AA) */
+.muted {
+  color: #b8c4d1;
+  font-size: 13px;
+}
+
+/* DEFECT: on narrow viewports the nav overlaps the page title */
+.hero {
+  position: relative;
+}
+@media (max-width: 640px) {
+  nav.app-nav {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  .hero h1 {
+    margin-top: 0;
+  }
+}
