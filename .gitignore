@@ -1,5 +1,19 @@
+# Dependencies & build output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Env & secrets (never commit)
+.env
+.env.*
+!.env.example
+
 # WSL "mark of the web" metadata artifacts
 *Zone.Identifier
 
 # Runtime review-export drop zone (per docs/21 §1.4)
 .uxcue/
+
+# Editor / OS
+.DS_Store

@@ -1,0 +1,7 @@
+{
+  "name": "uxcue-spikes",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Throwaway Phase 1 risk spikes (docs/21 §5). Not part of the workspace build."
+}
