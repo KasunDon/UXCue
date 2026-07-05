@@ -29,7 +29,12 @@ export function overlayMain(): void {
   pill.textContent = "Capture mode — click a UI defect · Esc to cancel";
   pill.style.cssText =
     "position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#0b0f14;color:#fff;font:13px sans-serif;padding:6px 12px;border-radius:20px;pointer-events:none;";
-  shadow.append(box, label, pill);
+  // Transparent capture layer that receives ALL pointer events, so elements that
+  // suppress their own events (disabled form controls) are still selectable. We
+  // hit-test by coordinates (elementFromPoint) rather than relying on e.target.
+  const hit = document.createElement("div");
+  hit.style.cssText = "position:fixed;inset:0;pointer-events:auto;cursor:crosshair;";
+  shadow.append(hit, box, label, pill);
 
   let current: Element | null = null;
 
@@ -117,8 +122,17 @@ export function overlayMain(): void {
     document.removeEventListener("keydown", onKey, true);
   }
 
+  // The element under the cursor — found by coordinates so it works even over
+  // disabled controls (which never fire mouse events themselves). The capture
+  // layer is toggled off for the hit test so it doesn't shadow the page.
+  function elAt(x: number, y: number): Element | null {
+    hit.style.pointerEvents = "none";
+    const el = document.elementFromPoint(x, y);
+    hit.style.pointerEvents = "auto";
+    return el;
+  }
   function onMove(e: MouseEvent): void {
-    const el = e.target as Element;
+    const el = elAt(e.clientX, e.clientY);
     if (!el || el === current || host.contains(el)) return;
     current = el;
     highlight(el);
@@ -132,7 +146,7 @@ export function overlayMain(): void {
   function onClick(e: MouseEvent): void {
     e.preventDefault();
     e.stopPropagation();
-    const el = e.target as Element;
+    const el = elAt(e.clientX, e.clientY);
     if (!el || host.contains(el)) return;
     const rect = el.getBoundingClientRect();
     const sel = selectorFor(el);

@@ -21,8 +21,11 @@ beforeEach(() => {
 describe("overlayMain (UXL-EXT-004)", () => {
   it("selects a clicked element and posts schema-valid CAPTURE_SELECTED", () => {
     document.body.innerHTML = `<main><button data-testid="upgrade" class="btn">Upgrade now</button></main>`;
+    const button = document.querySelector("button")!;
+    // The overlay hit-tests by coordinates; jsdom has no layout, so stub it.
+    document.elementFromPoint = (() => button) as typeof document.elementFromPoint;
     overlayMain();
-    document.querySelector("button")!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     expect(messages).toHaveLength(1);
     const m = messages[0]!;
@@ -32,6 +35,21 @@ describe("overlayMain (UXL-EXT-004)", () => {
     expect(el.selector).toBe('[data-testid="upgrade"]');
     expect(el.tagName).toBe("button");
     expect(el.textSnippet).toBe("Upgrade now");
+  });
+
+  it("selects a DISABLED element (which never fires its own mouse events)", () => {
+    document.body.innerHTML = `<form><button data-testid="pay" disabled>Pay</button></form>`;
+    const disabled = document.querySelector("button")!;
+    // Coordinate hit-testing returns the disabled button even though clicking it
+    // dispatches no event; the capture layer receives the click instead.
+    document.elementFromPoint = (() => disabled) as typeof document.elementFromPoint;
+    overlayMain();
+    // The click lands on the overlay's capture layer, not the disabled button.
+    document.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+    const m = messages.find((x) => x.type === "CAPTURE_SELECTED");
+    expect(m).toBeTruthy();
+    expect((m!.element as { selector: string }).selector).toBe('[data-testid="pay"]');
   });
 
   it("renders in a closed shadow DOM and never double-arms", () => {

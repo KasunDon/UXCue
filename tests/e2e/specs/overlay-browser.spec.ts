@@ -23,7 +23,10 @@ test("overlayMain selects a real element and emits a schema-shaped payload", asy
   });
   await page.evaluate(overlayMain);
 
-  await page.click('[data-testid="upgrade-plan-button"]');
+  // The overlay's transparent capture layer sits above the page (so disabled
+  // elements are selectable too), so click by coordinates, not by selector.
+  const box = (await page.locator('[data-testid="upgrade-plan-button"]').boundingBox())!;
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
 
   const msg = await page.evaluate(
     () =>
