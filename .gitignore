@@ -22,3 +22,4 @@ tests/e2e/playwright-report/
 
 # Editor / OS
 .DS_Store
+tests/e2e/screens/
