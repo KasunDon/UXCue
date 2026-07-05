@@ -160,6 +160,10 @@ Priority:
 - Network error digest without bodies.
 - Per-issue diagnostic correlation window.
 
+### Test & Automation Tooling
+
+- Interaction recording → replayable regression tests (record extension/capture flows, export a JSON step list, generate Playwright specs; reuses `UXL-EXT-005` selectors + `UXL-QA-001` harness; local-only/opt-in). Tracked in **GitHub issue #2** (`QA-REC-001` recorder / `QA-REC-002` spec generator). P2/P3, after the capture/export core (D016).
+
 ### Cloud
 
 - Team/workspace model.

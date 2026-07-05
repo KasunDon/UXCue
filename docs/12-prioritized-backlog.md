@@ -147,6 +147,15 @@ Gate: MVP definition-of-done (docs/21 §10), including two-agent-family dogfood.
 | WS7-006 | P1 | Unlisted beta release | WS7-002..005 | Store-signed build passes full smoke |
 | WS7-007 | P1 | Public release | WS7-006 | Flip public after clean unlisted soak; rollback plan |
 
+## Test & Automation Tooling (P2/P3)
+
+| ID | Priority | Item | Dependencies | Acceptance |
+| --- | --- | --- | --- | --- |
+| QA-REC-001 | P2 | Interaction recorder in extension | L1-003, X6-001 | Opt-in/local-only recorder emits a portable JSON step list with stable selectors; redacts secret-looking values |
+| QA-REC-002 | P3 | Recorded-flow → Playwright spec generator | QA-REC-001, L1-011 | Generates a runnable spec/replay input; replaying against the fixture app reproduces the same `UX-nnn` issues deterministically |
+
+Scheduled after the capture/export core (D016). Tracked in GitHub issue #2. Reuses selector generation (L1-004/`UXL-EXT-005`) and the Playwright harness (`UXL-QA-001`).
+
 ## Dependency Graph
 
 ```txt
