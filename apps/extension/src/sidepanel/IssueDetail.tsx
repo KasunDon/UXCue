@@ -4,6 +4,9 @@ import { renderIssueMarkdown } from "@uxcue/markdown";
 import type { Tokens } from "@uxcue/ui";
 import { repo } from "./repo";
 import { useTokens } from "./theme";
+import { GitHubClient } from "../github/client";
+import * as gh from "../github/settings";
+import { publishIssue } from "../github/publish";
 
 const TYPES: IssueType[] = [
   "visual-defect",
@@ -51,6 +54,9 @@ export function IssueDetail({
   });
   const [shots, setShots] = useState<{ el?: string; vp?: string }>({});
   const [copied, setCopied] = useState(false);
+  const [ghUrl, setGhUrl] = useState<string | undefined>(issue.github?.url);
+  const [ghBusy, setGhBusy] = useState(false);
+  const [ghMsg, setGhMsg] = useState<string>();
   const t = useTokens();
   const S = makeStyles(t);
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
@@ -105,6 +111,23 @@ export function IssueDetail({
     );
     setCopied(true);
     setTimeout(() => setCopied(false), 1200);
+  }
+  async function createGitHubIssue() {
+    setGhMsg(undefined);
+    const token = await gh.getToken();
+    const repoRef = await gh.getProjectRepo(issue.projectId);
+    if (!token) return setGhMsg("Connect GitHub first (⎇ in the header).");
+    if (!repoRef) return setGhMsg("Pick a default repo for this project (⎇ in the header).");
+    setGhBusy(true);
+    try {
+      const created = await publishIssue(new GitHubClient(token), repoRef, issue, repo);
+      setGhUrl(created.url);
+      onChanged();
+    } catch (e) {
+      setGhMsg(e instanceof Error ? e.message : "Failed to create GitHub issue");
+    } finally {
+      setGhBusy(false);
+    }
   }
 
   return (
@@ -210,6 +233,32 @@ export function IssueDetail({
         </div>
       )}
 
+      <div style={S.ghSection}>
+        {ghUrl ? (
+          <a
+            data-testid="gh-link"
+            href={ghUrl}
+            target="_blank"
+            rel="noreferrer"
+            style={{ color: t.color.link, fontSize: 13 }}
+          >
+            View on GitHub ↗
+          </a>
+        ) : (
+          <button
+            data-testid="create-gh"
+            onClick={createGitHubIssue}
+            disabled={ghBusy}
+            style={S.ghBtn}
+          >
+            {ghBusy ? "Creating…" : "Create GitHub issue"}
+          </button>
+        )}
+        {ghMsg && (
+          <p style={{ color: t.color.textMuted, fontSize: 12, margin: "6px 0 0" }}>{ghMsg}</p>
+        )}
+      </div>
+
       <button data-testid="detail-save" onClick={save} style={S.save}>
         Save changes
       </button>
@@ -288,6 +337,18 @@ function makeStyles(t: Tokens): Record<string, CSSProperties> {
       flexDirection: "column",
       gap: 4,
       overflowX: "auto",
+    },
+    ghSection: { margin: "10px 0", paddingTop: 10, borderTop: `1px solid ${t.color.border}` },
+    ghBtn: {
+      font: "inherit",
+      fontSize: 13,
+      fontWeight: 650,
+      padding: "8px 12px",
+      borderRadius: t.radius,
+      border: `1px solid ${t.color.border}`,
+      background: t.color.surface,
+      color: t.color.text,
+      cursor: "pointer",
     },
     save: {
       width: "100%",

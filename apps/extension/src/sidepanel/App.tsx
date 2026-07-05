@@ -14,6 +14,7 @@ import { repo } from "./repo";
 import { exportSession, exportSessionInline } from "./download";
 import { Composer } from "./Composer";
 import { IssueDetail } from "./IssueDetail";
+import { GitHubPanel } from "./GitHubPanel";
 import { useTheme } from "./theme";
 
 const platform = getPlatform();
@@ -44,6 +45,7 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const [draft, setDraft] = useState<CaptureDraft | null>(null);
   const [selectedId, setSelectedId] = useState<string>();
+  const [showGitHub, setShowGitHub] = useState(false);
 
   const project = projects.find((p) => p.id === projectId);
   const session = sessions.find((s) => s.id === sessionId);
@@ -138,6 +140,14 @@ export function App() {
           <span style={S.count} data-testid="issue-count">
             {filtered.length} shown
           </span>
+          <button
+            data-testid="github-btn"
+            onClick={() => setShowGitHub(true)}
+            title="GitHub integration"
+            style={S.themeToggle}
+          >
+            ⎇
+          </button>
           <button
             data-testid="theme-toggle"
             onClick={toggle}
@@ -329,6 +339,8 @@ export function App() {
           />
         </div>
       )}
+
+      {showGitHub && <GitHubPanel projectId={projectId} onClose={() => setShowGitHub(false)} />}
     </div>
   );
 }
